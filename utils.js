@@ -1,4 +1,20 @@
 var utils = function() {  
+	this.dv = {
+		setString(id, val) {
+			let field = parasql.app.getWidgetById(id)
+			let dv = field.getDataValue()
+			dv.setString(val)
+			field.setDataValue(dv)
+		},
+		setNumber(id, val) {
+			let field = parasql.app.getWidgetById(id)
+			let dv = field.getDataValue()
+			dv.setNumber(val)
+			field.setDataValue(dv)
+		}
+	}
+
+	
 	this.expandDate = function(event) {
 		let domTarget = event.domEvent.target;
 		// check for jQuery keydown events on the dom input element...
@@ -47,5 +63,29 @@ var utils = function() {
 				}
 			});
 		}
+	}
+
+	this.copyRecord = function(recordObjectId, rFields, eFields) {
+		let recordObject = parasql.app.getWidgetById(recordObjectId)
+		let dt = recordObject.getDataTable();
+		let oldRecord = dt.getRowAt(recordObject.getSelectedRowIndex());
+		let dtColumns = dt.getColumns();
+	
+		recordObject.addIndividualRecord();
+		let newRecord = dt.getRowAt(recordObject.getSelectedRowIndex());
+	
+		for (let x = 0; x < dtColumns.length; x++) {
+			let cName = dt.getColumns()[x].getColumnName();
+			if (rFields.includes(cName)) {
+				console.log("Restricted Field");
+			} else if (Object.keys(eFields).includes(cName)){
+				let dvStr = oldRecord.getValueAt(x).getString();
+				newRecord.getValueAt(x).setString(eFields[cName] + dvStr);
+			} else {
+				newRecord.getValueAt(x).takeValueFrom(oldRecord.getValueAt(x));
+			}			
+		}
+	
+		recordObject.redisplay();	
 	}
 } 
