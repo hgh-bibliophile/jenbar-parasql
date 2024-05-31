@@ -11,6 +11,12 @@ var utils = function() {
 			let dv = field.getDataValue()
 			dv.setNumber(val)
 			field.setDataValue(dv)
+		},
+		setDate(id, val) {
+			let field = parasql.app.getWidgetById(id)
+			let dv = field.getDataValue()
+			dv.setDate(val)
+			field.setDataValue(dv)
 		}
 	}
 
@@ -65,6 +71,10 @@ var utils = function() {
 		}
 	}
 
+	// Copy a data record given the following:
+	// recordObjectId - widgetID of the record object
+	// rFields - restricted fields that will not be copied (like the primary key ID field)
+	// eFields - edit fields (string only) that will have their contents prepended with the given prefix {"Name": "COPY: "}
 	this.copyRecord = function(recordObjectId, rFields, eFields) {
 		let recordObject = parasql.app.getWidgetById(recordObjectId)
 		let dt = recordObject.getDataTable();
