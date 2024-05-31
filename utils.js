@@ -1,4 +1,6 @@
-var utils = function() {  
+var utils = function() { 
+	let _utils = this
+	
 	this.dv = {
 		setString(id, val) {
 			let field = parasql.app.getWidgetById(id)
@@ -69,6 +71,61 @@ var utils = function() {
 				}
 			});
 		}
+	}
+
+	this.download = {
+		dlFile(blob, file) {
+			const link = document.createElement('a')
+			// create a blobURI pointing to our Blob
+			link.href = URL.createObjectURL(blob)
+			link.download = file
+			// some browser needs the anchor to be in the doc
+			document.body.append(link)
+			
+			link.click()
+			link.remove()
+			// in case the Blob uses a lot of memory
+			setTimeout(() => URL.revokeObjectURL(link.href), 7000)
+		},
+		csv: {
+			_(dt, fn) {
+				if (fn.split('.').pop() !== 'csv') fn += '.csv'
+				const csvBlob = new Blob([dt.toCSV()], { type: 'text/csv;charset=utf-8;' })		
+				_utils.download.dlFile(csvBlob, fn)
+			},
+			tbl(id, filename) {
+				let tblDT = parasql.app.getWidgetById(id).getDataTable()
+				this._(tblDT, filename)
+			},
+			sql(sql, filename) {
+				let _ = this._
+				parasql.app.execSQL(sql, function(tblDT) {
+					_(tblDT, filename)
+				})
+			}
+		}
+	}
+	
+	this.setConfirmClose = function(name, confirmStr) {
+		let $btn = 	$(`.ModalPanel .header-bar:contains("${name}") .button`)
+		let $icon = $btn.children()
+		
+		if ($btn.css('padding') === '0px') return
+		
+		$icon.css({ 'padding': $btn.css('padding'), 'border-radius': $btn.css('border-radius') })
+		$btn.css('padding', '0px')
+		
+		$btn.hover(() => {
+			$icon.css('border', $btn.css('border'))
+			$btn.css('border', 'none')
+		}, () => {
+			$icon.css('border', 'none')
+			$btn.css('border', '')
+		})
+		
+		$icon.click(e => { 
+			if (!confirm(confirmStr)) e.stopPropagation()
+		})
 	}
 
 	// Copy a data record given the following:
