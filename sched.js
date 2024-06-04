@@ -3,7 +3,7 @@ var sched = function() {
 
 	// --- PayPeriod Class --- // extract to JB-utils script?
 	
-	class PayPeriod {
+	this.PayPeriod = class {
 		static refDate = '2023-09-11T00:00:00'
 		static calcStartDate = function (calcDate) {
 			const refDate = dayjs(PayPeriod.refDate)
@@ -56,19 +56,19 @@ var sched = function() {
 	  
 			if (beginDV.isNotNull() && endDV.isNotNull()) {
 				const range = (shiftBy < 0) ? [beginDT, endDT] : [endDT, beginDT];
-				const dateDiff = jb.dateDiff(...range) + shiftBy;
-	  			jb.dv.setDate(beginId, jb.incrementDate(beginDT, dateDiff));
-	  			jb.dv.setDate(endId, jb.incrementDate(endDT, dateDiff));
+				const dateDiff = _sched.dateDiff(...range) + shiftBy;
+	  			_sched.dv.setDate(beginId, _sched.incrementDate(beginDT, dateDiff));
+	  			_sched.dv.setDate(endId, _sched.incrementDate(endDT, dateDiff));
 	  
 	  		} else if (beginDV.isNotNull()) {
-	  			jb.dv.setDate(beginId, jb.incrementDate(beginDT, shiftBy));
+	  			_sched.dv.setDate(beginId, _sched.incrementDate(beginDT, shiftBy));
 	  
 	  		} else if (endDV.isNotNull()) {
-	  			jb.dv.setDate(endId, jb.incrementDate(endDT, shiftBy));
+	  			_sched.dv.setDate(endId, _sched.incrementDate(endDT, shiftBy));
 	  		}
 	  		
 	  	} else {
-	  		jb.dv.setDate(beginId, jb.incrementDate(beginDT, shiftBy));
+	  		_sched.dv.setDate(beginId, _sched.incrementDate(beginDT, shiftBy));
 	  	}
 	}
   
