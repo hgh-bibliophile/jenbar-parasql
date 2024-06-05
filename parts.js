@@ -1,5 +1,5 @@
 var parts = function() {
-	jb.logic = {
+	this.logic = {
 		findClosingBracket(str, pos) {
 			const rExp = /\(|\)/g
 			rExp.lastIndex = pos + 1
