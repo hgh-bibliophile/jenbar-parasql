@@ -57,18 +57,18 @@ var sched = function() {
 			if (beginDV.isNotNull() && endDV.isNotNull()) {
 				const range = (shiftBy < 0) ? [beginDT, endDT] : [endDT, beginDT];
 				const dateDiff = _sched.dateDiff(...range) + shiftBy;
-	  			_sched.dv.setDate(beginId, _sched.incrementDate(beginDT, dateDiff));
-	  			_sched.dv.setDate(endId, _sched.incrementDate(endDT, dateDiff));
+	  			setDate(beginId, _sched.incrementDate(beginDT, dateDiff));
+	  			setDate(endId, _sched.incrementDate(endDT, dateDiff));
 	  
 	  		} else if (beginDV.isNotNull()) {
-	  			_sched.dv.setDate(beginId, _sched.incrementDate(beginDT, shiftBy));
+	  			setDate(beginId, _sched.incrementDate(beginDT, shiftBy));
 	  
 	  		} else if (endDV.isNotNull()) {
-	  			_sched.dv.setDate(endId, _sched.incrementDate(endDT, shiftBy));
+	  			setDate(endId, _sched.incrementDate(endDT, shiftBy));
 	  		}
 	  		
 	  	} else {
-	  		_sched.dv.setDate(beginId, _sched.incrementDate(beginDT, shiftBy));
+	  		setDate(beginId, _sched.incrementDate(beginDT, shiftBy));
 	  	}
 	}
   
@@ -78,63 +78,63 @@ var sched = function() {
 	  		const whiteFont = '#FFFFFF'
 	  		const darkFont = '#000000'
 	  
-	          const contracts = {
-	  			'060ED': {
+	        	const contracts = {
+				'060ED': {
 	  				tripBackColor: '#8e3e3e', // '#7AA8B8'
 	  				lightTripFont: true
 	  			},
 	  	  		'13014': {
-	  				tripBackColor: '#d8a6a6' // '#4E98B1' 
-	              }, 
-	              '130A6': {
-	  				tripBackColor: '#8e3e66', //'#4689A0'
-	  				lightTripFont: true
-	              },
-	              '130BD': {
-	  				tripBackColor: '#d095b3' // '#46A0A0'
-	              },
-	  	  		'130HJ': { 
-	  				tripBackColor: '#663e8e', // '#71ADC1'
-	  				lightTripFont: true
-	              },
-	              '130L8': {
-	  				tripBackColor: '#5FA3B9' // '#5FA3B9'
-	              },
-	              '136A0': {
-	  				tripBackColor: '#bfa6d8' // '#83B7C9'
-	              },
-	              '13729': {
-	  				tripBackColor: '#3e668e', // '#7AA8B8'
-	  				lightTripFont: true
-	              },
-	              '140L5': {
-	                  tripBackColor: '#a6bfd8' // '#5993A6'
-	              },
-	              '144JE': {
-	  				tripBackColor: '#3e8e7a', // '#3E8E8E'
-	  				lightTripFont: true
-	              },
-	              '144JJ': {
-	  				tripBackColor: '#a6d8cc' // '#7AA8B8'
-	              },
-	              '148L5': {
+					tripBackColor: '#d8a6a6' // '#4E98B1'
+				},
+				'130A6': {
+					tripBackColor: '#8e3e66', //'#4689A0'
+					lightTripFont: true
+				},
+				'130BD': {
+					tripBackColor: '#d095b3' // '#46A0A0'
+				},
+				'130HJ': {
+					tripBackColor: '#663e8e', // '#71ADC1'
+					lightTripFont: true
+				},
+				'130L8': {
+					tripBackColor: '#5FA3B9' // '#5FA3B9'
+				},
+				'136A0': {
+					tripBackColor: '#bfa6d8' // '#83B7C9'
+				},
+				'13729': {
+					tripBackColor: '#3e668e', // '#7AA8B8'
+					lightTripFont: true
+				},
+				'140L5': {
+					tripBackColor: '#a6bfd8' // '#5993A6'
+				},
+				'144JE': {
+					tripBackColor: '#3e8e7a', // '#3E8E8E'
+					lightTripFont: true
+				},
+				'144JJ': {
+					tripBackColor: '#a6d8cc' // '#7AA8B8'
+				},
+				'148L5': {
 	  				tripBackColor: '#3e8e52', // '#4EB1B1'
-	  				lightTripFont: true
-	              },
-	              'JenBar': {
-	  				tripBackColor: '#b8e0c2' // '#A9A9A9'
-	              }
-	  		}
-	  		
-	          let tripBackColor = contracts[contractName]?.tripBackColor ?? '#999999'
-	          let tripFontColor = contracts[contractName]?.lightTripFont ? whiteFont : darkFont
-	  
-	  		$element.css("background-color", tripBackColor);
-	  		$element.css("color", tripFontColor);
+					lightTripFont: true
+				},
+				'JenBar': {
+					tripBackColor: '#b8e0c2' // '#A9A9A9'
+				}
+			}
+			
+			let tripBackColor = contracts[contractName]?.tripBackColor ?? '#999999'
+			let tripFontColor = contracts[contractName]?.lightTripFont ? whiteFont : darkFont
+
+			$element.css("background-color", tripBackColor);
+			$element.css("color", tripFontColor);
 		},
 		empArea(areaName, $element) {
-	    	const areaColors = {
-	        	'Syracuse': '#3D778A',
+			const areaColors = {
+				'Syracuse': '#3D778A',
 				'Rochester': '#3D8A8A',
 				'Philadelphia': '#506295',
 				'Buffalo': '#508495',
@@ -204,5 +204,14 @@ var sched = function() {
 		unassigned($element) {
 			$element.css("background-color", '#F08080')
 		}
+	}
+
+	// Private function, referenced in shiftDateSearch()
+	// Implemented in /utils.js:this.dv.setDate()
+	function setDate(id, val) {
+		let field = parasql.app.getWidgetById(id)
+		let dv = field.getDataValue()
+		dv.setDate(val)
+		field.setDataValue(dv)
 	}
 }
