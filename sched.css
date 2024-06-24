@@ -7,7 +7,7 @@ div.HTMLWidget > div.Content > div.Legend {
 	}
 	
 	&.contract-13014 {
-		background-color: #d8a6a6
+		background-color: #d8a6a6;
 	}
 	&.contract-130A6 {
 		background-color: #8e3e66;
@@ -57,7 +57,7 @@ div.HTMLWidget > div.Content > div.Legend {
 		background-color: #3D778A;
 	}
 	&.area-Rochester {
-		background-color: #3D8A8A,;
+		background-color: #3D8A8A;
 	}
 	&.area-Philadelphia{
 		background-color: #506295;
