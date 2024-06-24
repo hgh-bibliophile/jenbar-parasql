@@ -1,5 +1,5 @@
 div.ReportWidget div.DataRow > div.DataCell,
-div.BoxWidget div.HTMLWidget.Legend {
+div.BoxWidget div.HTMLWidget.Legend > div.Content > div {
 	/* Contract Name */
 	&.contract-060ED {
 		background-color: #8e3e3e;
