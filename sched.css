@@ -1,0 +1,119 @@
+
+/* Contract Name */
+.contract-060ED {
+	background-color: #8e3e3e;
+	color: white;
+}
+
+.contract-13014 {
+	background-color: #d8a6a6
+}
+.contract-130A6 {
+	background-color: #8e3e66;
+	color: white;
+}
+.contract-130BD {
+	background-color: #d095b3;
+}
+.contract-130HJ {
+	background-color: #663e8e;
+	color: white;
+}
+.contract-130L8 {
+	background-color: #5FA3B9;
+}
+.contract-136A0 {
+	background-color: #bfa6d8;
+}
+.contract-13729 {
+	background-color: #3e668e;
+	color: white;
+}
+.contract-140L5 {
+	background-color: #a6bfd8;
+}
+.contract-144JE {
+	background-color: #3e8e7a;
+	color: white;
+}
+.contract-144JJ {
+	background-color: #a6d8cc;
+}
+.contract-148L5 {
+	background-color: #3e8e52;
+	color: white;
+}
+.contract-JenBar {
+	background-color: #b8e0c2
+}
+
+/* Employee Area */
+[class*="area-"] {
+	font-weight: bold;
+	color: white;
+}
+.area-Syracuse {
+	background-color: #3D778A;
+}
+.area-Rochester {
+	background-color: #3D8A8A,;
+}
+.area-Philadelphia{
+	background-color: #506295;
+}
+.area-Buffalo {
+	background-color: #508495;
+}
+.area-Binghamton {
+	background-color: #3D638A;
+}  
+.area-Watertown {
+	background-color: #507395;
+}
+
+.search-result {
+	background-color: #CFE2F3;
+}
+
+/* Employee Status */
+.status-Unavailable {
+	background-color: #FF8080;
+}
+.status-Possible {
+	background-color: #FFDD99;
+}
+.status-Likely {
+	background-color: #A3C2C2;
+}
+/*
+* Unavailable: #FF8080; // #FFFF00 (Yellow); #F08080 (Unavailable red)
+* Possible: #FFDD99; // #FFC000 (Bright orange); #FA9448 (13014 orange)
+* Likely: #A3C2C2; // #0070C0 (Dark blue); #00B0F0 (Light Blue)*/
+
+/* ETO Period Weeks */
+.eto-curWk {
+	background-color: #85ADAD;
+}
+.eto-altWk {
+	background-color: #A3C2C2;
+}
+.eto-nxtWk {
+	background-color: #DEE9E9; /* #D8E5E5 */
+}
+
+/* Shift Status */
+.shift-Omitted,
+.shift-CustomerCancelled,
+.shift-WeatherCancelled,
+.shift-HolidaySkip {
+	background-color: #D9D9D9;
+	font-style: italic;
+}
+.shift-Pending {
+	background-color: #a6b3d8;
+	font-style: italic;
+}
+
+.unassigned {
+	background-color: #F08080;
+}
