@@ -17,7 +17,8 @@ var sched = function() {
 	    }
 		startDate = () => this._start.toDate()
 		getDate = (day) => this._start.add(day - 1, 'd').toDate()
-		getDay = (dt) => dayjs(dt).startOf('d').diff(this._start, 'd') + 1	
+		getDay = (dt) => dayjs(dt).startOf('d').diff(this._start, 'd') + 1
+		getWeek = (dt) => Math.floor(this.getDay(dt) / 7)
 		inPeriod = (dt) => { 
 			const day = this.getDay(dt)
 			return (day >=1 && day <= 14)
