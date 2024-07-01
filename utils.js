@@ -19,8 +19,36 @@ var utils = function() {
 			let dv = field.getDataValue()
 			dv.setDate(val)
 			field.setDataValue(dv)
+		},
+		setTime(id, val) {
+			let field = parasql.app.getWidgetById(id)
+			let dv = field.getDataValue()
+			dv.setTime(val)
+			field.setDataValue(dv)
+		},
+		setDateTime(id, val) {
+			let field = parasql.app.getWidgetById(id)
+			let dv = field.getDataValue()
+			dv.setDateTime(val)
+			field.setDataValue(dv)
+		},
+		setVal(id, val) {
+			const dataTypes = {
+				date: "Date",
+				time: "Time",
+				datetime: "DateTime",
+				double: "Number",
+				varchar: "String"
+			}
+			let field = parasql.app.getWidgetById(id)
+			let dv = field.getDataValue()
+			let dt = dataTypes[field.getDatatype()]
+			dv['set' + dt](val)
+			field.setDataValue(dv)
 		}
 	}
+
+	
 
 	
 	this.expandDate = function(event) {
@@ -72,6 +100,104 @@ var utils = function() {
 			});
 		}
 	}
+
+	this.QuickSearch = {
+		static btnStr = contains => `.ModalPanel .header-bar:contains('Search - ${contains}') .button`
+		
+		static ExampleConfig = {
+			tbl: '*DB TableName',
+			name: "Modal Panel Name (sans 'Search - ')",
+			ids: {
+				panel: '*Modal panel',
+				tbl: '*Table',
+				qSearch: '*Virtual.QuickSearch',
+				searchBtn: '*Search btn',
+				clearFilterBtn: 'Clear Filter btn',
+				toggleFilter: 'Virtual.Filter (default "master filter" toggle)',
+				searchFilter: {
+					FieldName1: 'ID for Virutal.[FieldName1]',
+					FieldName2: 'ID for Virutal.[FieldName2]'
+				}
+			},
+			filter: {
+				true: "Value for when 'All' not checked (filter applied, DEFAULT)",
+				false: "Value for when 'All' is checked (filter not applied)"
+			}
+		}
+		
+		constructor(config, applyIds, searchFilter=null) {
+			this.tbl = config.tbl
+			this.btn = QuickSearch.btnStr(config.name || this.tbl)
+			this.filter = config.filter
+			this.ids = config.ids
+			this.ids.apply = applyIds
+			this.searchFilter = searchFilter
+			
+			this.open = true
+			
+			parasql.app.getWidgetById(this.ids.panel).show()
+			parasql.app.getWidgetById(this.ids.qSearch).focus()
+	
+			this.setCloseEvent()
+			
+			if (this.filter) {
+				this.chkbox = '#filter'
+				this.filterVal = this.filter.true
+				this.setFilterEvent()
+			}
+			if (this.searchFilter) {
+				Object.entries(config.ids.searchFilter).forEach(([col, id]) => {
+					if (col in searchFilter) 
+						_utils.dv.setVal(id, searchFilter[col])
+				})
+			}
+	
+			this.refresh()
+		}
+		setCloseEvent() {
+			let $modalCloseBtn = $(this.btn)
+			if (this.open && !($._data($modalCloseBtn[0], 'events'))?.click)
+				$modalCloseBtn.click((e) => this.reset())
+		}
+		setFilterEvent() {
+			if (this.open) 
+				$(this.chkbox).change(e => this.filterOnChange(e.target))
+		}
+		loadChkBox() { 
+			if (this.open && this.filterVal == this.filter.false) 
+				$(this.chkbox).prop('checked', true) 
+		}
+		filterOnChange(e) {
+			this.filterVal = this.filter[!$(e).is(":checked")]
+			_utils.dv.setString(this.ids.toggleFilter, this.filterVal)
+			this.search()
+		}
+		clearQSearch = () => parasql.app.getWidgetById(this.ids.qSearch).setDataValueNull()
+		resetFilter = () => _utils.dv.setString(this.ids.toggleFilter, this.filter.true)
+		search = () => { if (this.open) parasql.app.getWidgetById(this.ids.searchBtn).performClick() }
+		refresh = () => parasql.app.getWidgetById(this.ids.tbl).refreshQuery()
+		reset() {
+			this.open = false;
+			this.clearQSearch()
+			if (this.ids.toggleFilter) this.resetFilter()
+			if (this.ids.searchFilter) {
+				Object.values(this.ids.searchFilter).forEach(id => parasql.app.getWidgetById(id).setDataValueNull())
+				parasql.app.getWidgetById(this.ids.clearFilterBtn).performClick()
+			}
+		}
+		clearApply() {
+			Object.values(this.ids.apply).forEach(id => parasql.app.getWidgetById(id).setDataValueNull())
+			this.reset()
+		}
+		apply() {
+			let _tbl = parasql.app.getWidgetById(this.ids.tbl)
+			Object.entries(this.ids.apply).forEach(([col, id]) => {
+				parasql.app.getWidgetById(id).setDataValue(_tbl.getSelectedValue(this.tbl, col))
+			})	
+			this.reset()
+		}
+	}
+	
 
 	this.download = {
 		dlFile(blob, file) {
