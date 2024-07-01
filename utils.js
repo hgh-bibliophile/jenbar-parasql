@@ -101,7 +101,7 @@ var utils = function() {
 		}
 	}
 
-	this.QuickSearch = {
+	this.QuickSearch = class {
 		static btnStr = contains => `.ModalPanel .header-bar:contains('Search - ${contains}') .button`
 		
 		static ExampleConfig = {
