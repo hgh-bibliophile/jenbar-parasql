@@ -186,12 +186,12 @@ var utils = function() {
 			}
 		}
 		clearApply() {
-			Object.values(this.ids.apply).forEach(id => parasql.app.getWidgetById(id).setDataValueNull())
+			if (this.ids.apply) Object.values(this.ids.apply).forEach(id => parasql.app.getWidgetById(id).setDataValueNull())
 			this.reset()
 		}
 		apply() {
 			let _tbl = parasql.app.getWidgetById(this.ids.tbl)
-			Object.entries(this.ids.apply).forEach(([col, id]) => {
+			if (this.ids.apply) Object.entries(this.ids.apply).forEach(([col, id]) => {
 				parasql.app.getWidgetById(id).setDataValue(_tbl.getSelectedValue(this.tbl, col))
 			})	
 			this.reset()
