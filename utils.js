@@ -320,6 +320,35 @@ var utils = function() {
 			}
 		}
 	}
+
+	this.getPDFDownloadURL = function(textFieldData) {
+		let data = textFieldData.split(';')
+		if (data.length = 4) {
+			this._filename = data[3] // database/files/{RAND-HEX-STR}.pdf
+			this._downloadFilename = data[0] // Contract-Version-JBSchedule.pdf
+	
+			this.getSignedDownloadURLResponse = function(a) {
+				parasql.ui.WaitPanel.hide();
+				a = parasql.util.deserializeJsonResponse(a);
+				if ("OK" == a.status) {
+					a = a.data;
+					var b = this._downloadFilename.replace(/"/g, " ");
+					a += "&response-content-disposition=" + encodeURIComponent('inline; filename="' + b + '"');
+					window.open(a)
+				} else
+					(new parasql.ui.MessagePanel("Error Retrieving Signed Download URL", "Contact JenBar IT for assistance.", a.errorMessage)).show()
+			}
+			parasql.util.sendAjaxMessage({
+				header: "x-appsynergy-get-signed-download-url",
+				object: {
+					objectName: this._filename
+				},
+				target: this,
+				action: this.getSignedDownloadURLResponse
+			});
+			parasql.ui.WaitPanel.show()
+		}
+	}
 	
 	this.setConfirmClose = function(name, confirmStr) {
 		let $btn = 	$(`.ModalPanel .header-bar:contains("${name}") .button`)
