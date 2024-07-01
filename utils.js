@@ -101,6 +101,95 @@ var utils = function() {
 		}
 	}
 
+	/** Keyboard Navigation for Multi-Select Report widgets
+ 	* Usage: 
+ 	* - HTML widget: render -> call kbNav.setup(tableWidget_ID)
+   	* - Report widget w/ multiselect: rendercell -> call kbNav.makeFocusable(event.target) // event.target = tableWidget
+	**/
+	this.kbNav = {
+		setup: function(tblId) {
+			$('body').off('keydown').on('keydown', e => {
+				const keyCodes = {
+					enter: 13,
+					space: 32,
+					up: 38,
+					down: 40			
+				}
+	
+				const tbl =  parasql.app.getWidgetById(tblId)
+	
+				if (!tbl.isVisible()) {
+					$(this).off(e)
+				} else if (e.target == tbl.widgetDiv && Object.values(keyCodes).includes(e.keyCode)) {
+					e.preventDefault()
+					const rowIdx = tbl.getSelectedRowIndex()
+					const rowCt = tbl.getDataTable().rows.length
+					switch (e.keyCode) {
+						case keyCodes.space: 
+							let row = tbl.getDataTable().getRowAt(rowIdx)
+	
+							row.toggleSelected()
+							$(tbl.widgetDiv).find(`[data-parasql-row-multiselect=${rowIdx}] i`)
+								.html(row.getIsSelected() ? 'check_box' : 'check_box_outline_blank')
+	
+							break;
+						case keyCodes.up:
+							tbl.setSelectedRowIndex(Math.max(rowIdx - 1, 0))
+							break;
+						case keyCodes.down:
+							tbl.setSelectedRowIndex(Math.min(rowIdx + 1, rowCt - 1))
+							break;
+						case keyCodes.enter:
+							let dblclick = new MouseEvent("dblclick", {
+								view: window,
+								bubbles: true,
+								cancelable: true,
+								ctrlKey: e.ctrlKey,
+								shiftKey: e.shiftKey,
+								altKey: e.altKey,
+								metaKey: e.metaKey
+							  });
+	
+	
+							let selRow = $(tbl.widgetDiv).find(`[data-parasql-row-index=${rowIdx}]`).get(0)
+							selRow.dispatchEvent(dblclick)
+	
+							function selectTbl(records, observer) {
+								records.forEach(function (r) {
+									if (typeof r.removedNodes == "object") {
+										if ($(r.removedNodes).is("div.modal-underlay")
+											&& $(r.previousSibling).is('div.MasterLayout')
+											&& !r.nextSibling
+										   ) {
+											$(tbl.widgetDiv).focus()
+											observer.disconnect()
+										}
+									}
+								})
+							}
+	
+							(new MutationObserver(selectTbl)).observe(document.body, { childList: true }); // Listen for DOM changes
+	
+							break;
+					}
+				}
+			})
+		},
+		makeFocusable: function (tblWidget) {
+			const dc = tblWidget.getLastRenderedDataCell()
+			
+			const lastCol = tblWidget.columns.filter(c => !c.isHidden).slice(-1)[0].getColumnName()
+			const rowId = dc.dataCellDiv.closest('.DataRow').dataset.parasqlRowIndex
+	
+			// Make Report "focusable"; only fire on data row 1 (& on the last visible column)
+			if (rowId == 0 && dc.columnName == lastCol) {
+				tblWidget.widgetDiv.tabIndex = 0
+				tblWidget.widgetDiv.style.outline = 'none'
+			}
+		}	
+	}
+
+
 	this.QuickSearch = class {
 		static btnStr = contains => `.ModalPanel .header-bar:contains('Search - ${contains}') .button`
 		
