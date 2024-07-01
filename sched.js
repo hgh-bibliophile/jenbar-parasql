@@ -10,11 +10,11 @@ var sched = function() {
 			calcDate = dayjs(calcDate).startOf('d')
 			const dDays = calcDate.diff(refDate, 'd')
 			return calcDate.subtract(dDays % 14, 'd')
-	    }
+		}
 		static isSame = (dt1, dt2) => (PayPeriod.calcStartDate(dt1).valueOf() == PayPeriod.calcStartDate(dt2).valueOf())
 		constructor(calcDate = new Date()) {
 			this._start = PayPeriod.calcStartDate(calcDate)
-	    }
+		}
 		startDate = () => this._start.toDate()
 		getDate = (day) => this._start.add(day - 1, 'd').toDate()
 		getDay = (dt) => dayjs(dt).startOf('d').diff(this._start, 'd') + 1
@@ -79,7 +79,7 @@ var sched = function() {
 	  		const whiteFont = '#FFFFFF'
 	  		const darkFont = '#000000'
 	  
-	        	const contracts = {
+				const contracts = {
 				'060ED': {
 	  				tripBackColor: '#8e3e3e', // '#7AA8B8'
 	  				lightTripFont: true
