@@ -127,7 +127,7 @@ var utils = function() {
 		
 		constructor(config, applyIds, searchFilter=null) {
 			this.tbl = config.tbl
-			this.btn = QuickSearch.btnStr(config.name || this.tbl)
+			this.btn = _utils.QuickSearch.btnStr(config.name || this.tbl)
 			this.filter = config.filter
 			this.ids = config.ids
 			this.ids.apply = applyIds
