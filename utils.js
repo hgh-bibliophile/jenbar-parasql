@@ -178,7 +178,7 @@ var utils = function() {
 		makeFocusable: function (tblWidget) {
 			const dc = tblWidget.getLastRenderedDataCell()
 			
-			const lastCol = tblWidget.columns.filter(c => !c.isHidden).slice(-1)[0].getColumnName()
+			const lastCol = tblWidget.columns.filter(c => !c.isHidden).slice(-1)[0].columnName
 			const rowId = dc.dataCellDiv.closest('.DataRow').dataset.parasqlRowIndex
 	
 			// Make Report "focusable"; only fire on data row 1 (& on the last visible column)
