@@ -302,8 +302,9 @@ var utils = function() {
 		}
 		applyField(id, newVal) {
 			let widget = parasql.app.getWidgetById(id)
-			let oldVal = widget.getDataValue()
-			parasql.app.getWidgetById(id).setDataValue(newVal) // Apply Value
+			let oldVal = new parasql.schema.DataValue()
+			oldVal.takeValueFrom(widget.getDataValue())
+			widget.setDataValue(newVal) // Apply Value
 			if (this.fieldCB) this.fieldCB(widget, oldVal, newVal) // call fieldApplyCB
 		}
 	}
