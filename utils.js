@@ -421,4 +421,76 @@ var utils = function() {
 	
 		recordObject.redisplay();
 	}
+
+	/** 
+ 	* Generate SQL to bulk update or duplicate records.
+  	* Returns a promise. Use chaining to process returned dataTable or SQl string -> dbMultiRecords(<params>).then(callbackFn)
+  	* ------------
+   	*  Parameters
+    	* ------------
+   	* action: 'INSERT', 'UPDATE', or 'SELECT'
+   	* tableName: Database table name to select from/update
+    	* pkColName: Primary Key column for tableName
+     	* schema: An object giving instructions for generating the sql statement.
+		schema.exclude: an array of column names to EXCLUDE from the sql statement 	-> these fields will not be copied or selected (has no effect when action='UPDATE')
+  		schema.change: an object of the form { ColumnName: "NewValue", etc. }		-> these fields will be set to the new value specified
+    		schema.prefix: an object of the form { ColumnName: "ValueToPrepend", etc. }	-> these fields will be modified like CONCAT_WS('', PrependVal, ColumnName) (w/ no space between) 
+          	schema.append: an object of the form { ColumnName: "ValueToAppend", etc. }	-> these fields will be modified like CONCAT_WS(' ', ColumnName, AppendVal) (w/ space between)
+      	* ids: An array of (pk) ids representing the records to act upon ('WHERE pkColName IN (ids)')
+       	* mode: 'SQL' or 'RUN'
+		- SQL: returns the generated sql statement
+  		- RUN: runs the generated sql statement and returns the dataTable results
+   	**/
+	this.dbMultiRecords = function (action, tableName, pkColName, schema, ids, mode='SQL') {
+		schema.exclude ??= []
+		schema.change ??= {}
+		schema.prefix ??= {}
+		schema.append ??= {}
+		
+		return new Promise((resolve, reject) => {
+			const allCols = parasql.app.getSchemaInfo().getTableInfo(tableName).getColumns().map(col => col.getColumnName())
+			let insertCols = (action != 'INSERT') ? [] : [pkColName]
+			let insertVals = (action != 'INSERT') ? [] : [`parasql_next_val('${tableName}')`]
+
+			// Change: Col = NewVal
+			Object.entries(schema.change).forEach(([col, val]) => {
+				insertCols.push(col)
+				if (typeof val === 'string' || val instanceof String) val = `'${val}'`
+				insertVals.push(val)
+			})
+			// Prefix: Col = Prefix+ColVal
+			Object.entries(schema.prefix).forEach(([col, mod]) => {
+				insertCols.push(col)
+				insertVals.push(`CONCAT_WS('','${mod}',${col})`)
+			})
+			// Append: Col = ColVal+' '+Append
+			Object.entries(schema.append).forEach(([col, mod]) => {
+				insertCols.push(col)
+				insertVals.push(`CONCAT_WS(' ',${col},'${mod}')`)
+			})	
+	
+			const otherCols = allCols.filter(col => !insertCols.concat(schema.exclude).includes(col))
+
+			// Generate SQL
+			let sql = '';
+			const sql_where = `WHERE ${pkColName} IN (${ids})`;
+			
+			switch (action) {
+				case 'SELECT':
+				case 'INSERT':
+					sql = `SELECT ${insertVals.concat(otherCols)} FROM ${tableName} ${sql_where};`
+					if (action == 'INSERT') sql = `INSERT INTO ${tableName} (${insertCols.concat(otherCols)}) ` + sql
+					break;
+				case 'UPDATE':
+					let set_sql = insertCols.map((col, i) => col + '=' + insertVals[i])
+					sql = `UPDATE ${tableName} SET ${set_sql} ${sql_where};`
+					break;
+			}
+	
+			if (mode == 'SQL')
+				resolve(sql)
+			else if (mode == 'RUN')
+				parasql.app.execSQL(sql, resolve, reject)
+		})
+	}
 } 
