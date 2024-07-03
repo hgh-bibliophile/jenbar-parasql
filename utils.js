@@ -44,7 +44,7 @@ var utils = function() {
 			let dv = field.getDataValue()
 			if (val == null) {
 				dv.setNull()
-			else {
+			} else {
 				let dt = (val != null) ? dataTypes[field.getDatatype()] : 'Null'
 				dv['set' + dt](val)
 			}
