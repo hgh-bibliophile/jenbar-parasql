@@ -64,7 +64,7 @@ var utils = function() {
 			$target.keydown(function(e) {
 				// if the pressed key was Enter (13) or Tab (9)...
 				if ([9, 13].includes(e.keyCode || e.which)) {
-					// check the input value for "/yyyy"...	
+					// check the input value for "/yyyy"...
 					let dStr = $target.val();
 					if (!dStr || dStr.startsWith("/")) return;
 					if (!dStr.match(/^(\d{1,2}\/){2}\d{4}$/)) { // Proper m/d/yyyy format
@@ -72,7 +72,7 @@ var utils = function() {
 						if (dtPts.length == 3 && dtPts[2]?.length <= 2) { // m/d/y or /yy
 							// if missing, expand "yy" to "yyyy"
 							dtPts[2] = dayjs().year().toString().substring(0,2) + dtPts[2].padStart(2, '0')
-						} else {									
+						} else {
 							// Or default to current year if missing "yy" entirely
 							dtPts.push(dayjs().year())
 						}
@@ -92,7 +92,7 @@ var utils = function() {
 			$target.keydown(function(e) {
 				// if the pressed key was Enter (13) or Tab (9)...
 				if ([9, 13].includes(e.keyCode || e.which)) {
-					// check the input value for ":x"...	
+					// check the input value for ":x"...
 					let tStr = $target.val();
 					if (!tStr.match(/:\w+$/)) {
 						// if missing, add ":00" (or "00" if ":" is the last character) 
@@ -117,10 +117,10 @@ var utils = function() {
 					enter: 13,
 					space: 32,
 					up: 38,
-					down: 40			
+					down: 40
 				}
 	
-				const tbl =  parasql.app.getWidgetById(tblId)
+				const tbl = parasql.app.getWidgetById(tblId)
 	
 				if (!tbl.isVisible()) {
 					$(this).off(e)
@@ -153,7 +153,7 @@ var utils = function() {
 								shiftKey: e.shiftKey,
 								altKey: e.altKey,
 								metaKey: e.metaKey
-							  });
+							 });
 	
 	
 							let selRow = $(tbl.widgetDiv).find(`[data-parasql-row-index=${rowIdx}]`).get(0)
@@ -165,7 +165,7 @@ var utils = function() {
 										if ($(r.removedNodes).is("div.modal-underlay")
 											&& $(r.previousSibling).is('div.MasterLayout')
 											&& !r.nextSibling
-										   ) {
+										) {
 											$(tbl.widgetDiv).focus()
 											observer.disconnect()
 										}
@@ -198,9 +198,16 @@ var utils = function() {
 	this.QuickSearch = class {
 		static btnStr = contains => `.ModalPanel .header-bar:contains('Search - ${contains}') .button`
 		static schema = {}
-		static setSchema (schemaObj) {
+		static importSchema (schemaObj) {
 			this.schema = schemaObj
-		}		
+			Object.entries(schemaObj).forEach(([name, config]) => {
+				this[name] = class extends this {
+					constructor(applyIds, searchFilter, fieldApplyCallback) {
+						super(config, applyIds, searchFilter, fieldApplyCallback)
+					}
+				}
+			})
+		}
 		static ExampleConfig = {
 			tbl: '*DB TableName',
 			name: "Modal Panel Name (sans 'Search - ')",
@@ -319,7 +326,7 @@ var utils = function() {
 		csv: {
 			_(dt, fn) {
 				if (fn.split('.').pop() !== 'csv') fn += '.csv'
-				const csvBlob = new Blob([dt.toCSV()], { type: 'text/csv;charset=utf-8;' })		
+				const csvBlob = new Blob([dt.toCSV()], { type: 'text/csv;charset=utf-8;' })
 				_utils.download.dlFile(csvBlob, fn)
 			},
 			tbl(id, filename) {
@@ -365,7 +372,7 @@ var utils = function() {
 	}
 	
 	this.setConfirmClose = function(name, confirmStr) {
-		let $btn = 	$(`.ModalPanel .header-bar:contains("${name}") .button`)
+		let $btn = $(`.ModalPanel .header-bar:contains("${name}") .button`)
 		let $icon = $btn.children()
 		
 		if ($btn.css('padding') === '0px') return
@@ -408,9 +415,9 @@ var utils = function() {
 				newRecord.getValueAt(x).setString(eFields[cName] + dvStr);
 			} else {
 				newRecord.getValueAt(x).takeValueFrom(oldRecord.getValueAt(x));
-			}			
+			}
 		}
 	
-		recordObject.redisplay();	
+		recordObject.redisplay();
 	}
 } 
