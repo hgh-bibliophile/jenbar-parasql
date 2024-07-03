@@ -42,8 +42,12 @@ var utils = function() {
 			}
 			let field = parasql.app.getWidgetById(id)
 			let dv = field.getDataValue()
-			let dt = dataTypes[field.getDatatype()]
-			dv['set' + dt](val)
+			if (val == null) {
+				dv.setNull()
+			else {
+				let dt = (val != null) ? dataTypes[field.getDatatype()] : 'Null'
+				dv['set' + dt](val)
+			}
 			field.setDataValue(dv)
 		}
 	}
@@ -126,12 +130,13 @@ var utils = function() {
 					const rowCt = tbl.getDataTable().rows.length
 					switch (e.keyCode) {
 						case keyCodes.space: 
-							let row = tbl.getDataTable().getRowAt(rowIdx)
-	
-							row.toggleSelected()
-							$(tbl.widgetDiv).find(`[data-parasql-row-multiselect=${rowIdx}] i`)
-								.html(row.getIsSelected() ? 'check_box' : 'check_box_outline_blank')
-	
+							if (tbl.isMultiSelect()) {
+								let row = tbl.getDataTable().getRowAt(rowIdx)
+		
+								row.toggleSelected()
+								$(tbl.widgetDiv).find(`[data-parasql-row-multiselect=${rowIdx}] i`)
+									.html(row.getIsSelected() ? 'check_box' : 'check_box_outline_blank')
+							}
 							break;
 						case keyCodes.up:
 							tbl.setSelectedRowIndex(Math.max(rowIdx - 1, 0))
@@ -192,7 +197,10 @@ var utils = function() {
 
 	this.QuickSearch = class {
 		static btnStr = contains => `.ModalPanel .header-bar:contains('Search - ${contains}') .button`
-		
+		static schema = {}
+		static setSchema (schemaObj) {
+			this.schema = schemaObj
+		}		
 		static ExampleConfig = {
 			tbl: '*DB TableName',
 			name: "Modal Panel Name (sans 'Search - ')",
@@ -214,13 +222,15 @@ var utils = function() {
 			}
 		}
 		
-		constructor(config, applyIds, searchFilter=null) {
+		constructor(config, applyIds, searchFilter=null, fieldApplyCallback=null) {
 			this.tbl = config.tbl
-			this.btn = _utils.QuickSearch.btnStr(config.name || this.tbl)
+			this.btn = this.constructor.btnStr(config.name || this.tbl)
 			this.filter = config.filter
 			this.ids = config.ids
-			this.ids.apply = applyIds
+			this.applyIds = applyIds
 			this.searchFilter = searchFilter
+
+			if (typeof fieldApplyCallback == 'function') this.fieldCB = fieldApplyCallback
 			
 			this.open = true
 			
@@ -271,19 +281,23 @@ var utils = function() {
 			if (this.ids.toggleFilter) this.resetFilter()
 			if (this.ids.searchFilter) {
 				Object.values(this.ids.searchFilter).forEach(id => parasql.app.getWidgetById(id).setDataValueNull())
-				parasql.app.getWidgetById(this.ids.clearFilterBtn).performClick()
+				if (this.ids.clearFilterBtn) parasql.app.getWidgetById(this.ids.clearFilterBtn).performClick()
 			}
 		}
 		clearApply() {
-			if (this.ids.apply) Object.values(this.ids.apply).forEach(id => parasql.app.getWidgetById(id).setDataValueNull())
+			if (this.applyIds) Object.values(this.applyIds).forEach(id => this.applyField(id, new parasql.schema.DataValue())) // Set null
 			this.reset()
 		}
 		apply() {
 			let _tbl = parasql.app.getWidgetById(this.ids.tbl)
-			if (this.ids.apply) Object.entries(this.ids.apply).forEach(([col, id]) => {
-				parasql.app.getWidgetById(id).setDataValue(_tbl.getSelectedValue(this.tbl, col))
-			})	
+			if (this.applyIds) Object.entries(this.applyIds).forEach(([col, id]) => this.applyField(id, _tbl.getSelectedValue(this.tbl, col)))
 			this.reset()
+		}
+		applyField(id, newVal) {
+			let widget = parasql.app.getWidgetById(id)
+			let oldVal = widget.getDataValue()
+			parasql.app.getWidgetById(id).setDataValue(newVal) // Apply Value
+			if (this.fieldCB) this.fieldCB(widget, oldVal, newVal) // call fieldApplyCB
 		}
 	}
 	
