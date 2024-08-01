@@ -461,7 +461,7 @@ var utils = function() {
 				insertVals.push(val)
 			})
 			// Calc: Col = Expression
-			Object.entries(schema.append).forEach(([col, exp]) => {
+			Object.entries(schema.calc).forEach(([col, exp]) => {
 				insertCols.push(col)
 				insertVals.push(exp)
 			})
