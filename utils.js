@@ -434,6 +434,7 @@ var utils = function() {
      	* schema: An object giving instructions for generating the sql statement.
 		schema.exclude: an array of column names to EXCLUDE from the sql statement 	-> these fields will not be copied or selected (has no effect when action='UPDATE')
   		schema.change: an object of the form { ColumnName: "NewValue", etc. }		-> these fields will be set to the new value specified
+          	schema.calc: an object of the form { ColumnName: "SQL Expression", etc. }	-> these fields will be set to the expression specified
     		schema.prefix: an object of the form { ColumnName: "ValueToPrepend", etc. }	-> these fields will be modified like CONCAT_WS('', PrependVal, ColumnName) (w/ no space between) 
           	schema.append: an object of the form { ColumnName: "ValueToAppend", etc. }	-> these fields will be modified like CONCAT_WS(' ', ColumnName, AppendVal) (w/ space between)
       	* ids: An array of (pk) ids representing the records to act upon ('WHERE pkColName IN (ids)')
@@ -446,6 +447,7 @@ var utils = function() {
 		schema.change ??= {}
 		schema.prefix ??= {}
 		schema.append ??= {}
+		schema.calc ??= {}
 		
 		return new Promise((resolve, reject) => {
 			const allCols = parasql.app.getSchemaInfo().getTableInfo(tableName).getColumns().map(col => col.getColumnName())
@@ -458,6 +460,11 @@ var utils = function() {
 				if (typeof val === 'string' || val instanceof String) val = `'${val}'`
 				insertVals.push(val)
 			})
+			// Calc: Col = Expression
+			Object.entries(schema.append).forEach(([col, exp]) => {
+				insertCols.push(col)
+				insertVals.push(exp)
+			})
 			// Prefix: Col = Prefix+ColVal
 			Object.entries(schema.prefix).forEach(([col, mod]) => {
 				insertCols.push(col)
@@ -467,7 +474,7 @@ var utils = function() {
 			Object.entries(schema.append).forEach(([col, mod]) => {
 				insertCols.push(col)
 				insertVals.push(`CONCAT_WS(' ',${col},'${mod}')`)
-			})	
+			})
 	
 			const otherCols = allCols.filter(col => !insertCols.concat(schema.exclude).includes(col))
 
