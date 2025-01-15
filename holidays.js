@@ -197,7 +197,7 @@
 	) => {
 		const shift = { shiftSaturdayHolidays, shiftSundayHolidays };
 
-		if !(search instanceof RegExp) {
+		if (!(search instanceof RegExp)) {
 			search = new RegExp(search, 'i')
 		}
 		
@@ -210,7 +210,7 @@
 		// If any dates in this year's holiday list match the one passed in, then
 		// the passed-in date is a holiday.  Otherwise, it is not.
 		return allForYear.filter(
-			holiday => search.test(holiday.name) || search.test(holiday.alsoObservedAs)
+			holiday => (search.test(holiday.name) || search.test(holiday.alsoObservedAs))
 		);
 	};
 
