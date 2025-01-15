@@ -206,9 +206,9 @@
 		// If any dates in this year's holiday list match the one passed in, then
 		// the passed-in date is a holiday.  Otherwise, it is not.
 		return allForYear.some(
-			holiday => (search instanceof RegExp) 
+			holiday => ((search instanceof RegExp) 
 				? (search.test(holiday.name) || search.test(holiday.alsoObservedAs)) 
-				: (holiday.name.includes(search) || holiday.alsoObservedAs?.includes(search))
+				: (holiday.name.includes(search) || holiday.alsoObservedAs?.includes(search)))
 		);
 	};
 
