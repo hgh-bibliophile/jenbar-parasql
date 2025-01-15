@@ -193,7 +193,7 @@
 	const searchForHoliday = (
 		search,
 		year = new Date().getFullYear(),
-		{ shiftSaturdayHolidays = true, shiftSundayHolidays = true, utc = false } = {}
+		{ shiftSaturdayHolidays = true, shiftSundayHolidays = true, includeOtherNames = false } = {}
 	) => {
 		const shift = { shiftSaturdayHolidays, shiftSundayHolidays };
 
@@ -208,7 +208,7 @@
 		// If any dates in this year's holiday list match the one passed in, then
 		// the passed-in date is a holiday.  Otherwise, it is not.
 		return allForYear.filter(
-			holiday => (search.test(holiday.name) || search.test(holiday.alsoObservedAs))
+			holiday => (search.test(holiday.name) || (includeOtherNames || search.test(holiday.alsoObservedAs)))
 		);
 	};
 
