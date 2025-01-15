@@ -7,7 +7,7 @@
 	var has_require = typeof require !== 'undefined'
 	
 	var dayjs = root.dayjs
-	var utcPlugin = root.utcPlugin
+	var utcPlugin = root.dayjs_plugin_utc
 
 	if( typeof dayjs === 'undefined' ) {
 		if( has_require ) {
