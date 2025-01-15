@@ -196,6 +196,10 @@
 		{ shiftSaturdayHolidays = true, shiftSundayHolidays = true, utc = false } = {}
 	) => {
 		const shift = { shiftSaturdayHolidays, shiftSundayHolidays };
+
+		if !(search instanceof RegExp) {
+			search = new RegExp(search, 'i')
+		}
 		
 		// Get the holidays this year, plus check if New Year's Day of next year is
 		// observed on December 31 and if so, add it to this year's list.
@@ -205,10 +209,8 @@
 
 		// If any dates in this year's holiday list match the one passed in, then
 		// the passed-in date is a holiday.  Otherwise, it is not.
-		return allForYear.some(
-			holiday => ((search instanceof RegExp) 
-				? (search.test(holiday.name) || search.test(holiday.alsoObservedAs)) 
-				: (holiday.name.includes(search) || holiday.alsoObservedAs?.includes(search)))
+		return allForYear.filter(
+			holiday => search.test(holiday.name) || search.test(holiday.alsoObservedAs)
 		);
 	};
 
