@@ -192,11 +192,9 @@
 
 	const searchForHoliday = (
 		search,
+		year = new Date().getFullYear(),
 		{ shiftSaturdayHolidays = true, shiftSundayHolidays = true, utc = false } = {}
 	) => {
-		const newDate = utc ? dayjs.utc(date) : dayjs(date);
-		const year = newDate.year();
-
 		const shift = { shiftSaturdayHolidays, shiftSundayHolidays };
 		
 		// Get the holidays this year, plus check if New Year's Day of next year is
