@@ -74,7 +74,8 @@
 		// Birthday of Martin Luther King, Jr.
 		// Third Monday of January; fun fact: actual birthday is January 15
 		holidays.push({
-			name: `Birthday of Martin Luther King, Jr.`,
+			name: `Martin Luther King Jr. Day`,
+			alsoObservedAs: "Birthday of Martin Luther King, Jr.",
 			date: getNthDayOf(3, 1, 1, year)
 		});
 
@@ -82,8 +83,8 @@
 		// Third Monday of February; fun fact: actual birthday is February 22
 		// Fun fact 2: officially "Washington's Birthday," not "President's Day"
 		holidays.push({
-			name: `Washington's Birthday`,
-			alsoObservedAs: "Presidents' Day",
+			name: "Presidents' Day",
+			alsoObservedAs: `Washington's Birthday`,
 			date: getNthDayOf(3, 1, 2, year)
 		});
 
@@ -97,7 +98,8 @@
 		if (year > 2020) {
 			// Juneteenth
 			holidays.push({
-				name: `Juneteenth National Independence Day`,
+				name: `Juneteenth Day`,
+				alsoObservedAs: "Juneteenth National Independence Day",
 				date: getDateFor({ day: 19, month: 6, year })
 			});
 		}
