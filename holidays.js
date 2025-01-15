@@ -208,7 +208,7 @@
 		return allForYear.some(
 			holiday => (search instanceof RegExp) 
 				? (search.test(holiday.name) || search.test(holiday.alsoObservedAs)) 
-				: (holiday.name.includes(search) || holiday.alsoObservedAs.includes(search))
+				: (holiday.name.includes(search) || holiday.alsoObservedAs?.includes(search))
 		);
 	};
 
