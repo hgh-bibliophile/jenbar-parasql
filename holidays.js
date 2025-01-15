@@ -190,6 +190,30 @@
 		);
 	};
 
+	const searchForHoliday = (
+		search,
+		{ shiftSaturdayHolidays = true, shiftSundayHolidays = true, utc = false } = {}
+	) => {
+		const newDate = utc ? dayjs.utc(date) : dayjs(date);
+		const year = newDate.year();
+
+		const shift = { shiftSaturdayHolidays, shiftSundayHolidays };
+		
+		// Get the holidays this year, plus check if New Year's Day of next year is
+		// observed on December 31 and if so, add it to this year's list.
+		const allForYear = allFederalHolidaysForYear(year, shift);
+		const nextYear = allFederalHolidaysForYear(year + 1, shift);
+		allForYear.push(nextYear[0]);
+
+		// If any dates in this year's holiday list match the one passed in, then
+		// the passed-in date is a holiday.  Otherwise, it is not.
+		return allForYear.some(
+			holiday => (search instanceof RegExp) 
+				? (search.test(holiday.name) || search.test(holiday.alsoObservedAs)) 
+				: (holiday.name.includes(search) || holiday.alsoObservedAs.includes(search))
+		);
+	};
+
 	const getOneYearFromNow = () => {
 		const future = new Date();
 		future.setUTCFullYear(future.getUTCFullYear() + 1);
@@ -213,6 +237,7 @@
     
 	var holidays = {
 		isAHoliday,
+		search: searchForHoliday,
 		allForYear: allFederalHolidaysForYear,
 		inRange: federalHolidaysInRange
 	}
