@@ -1,7 +1,7 @@
 var tracking = function() { 
 	let _tracking = this
 
-  this.pullGeotabLocations = function (refreshId = null) {
+  this.pullGeotabLocations = function (onSuccessCB = null, onErrorCB = null) {
   	let sql = 'SELECT Vehicle_ID, Geotab_ID FROM Vehicle WHERE Geotab_ID IS NOT NULL AND SaleDate IS NULL;'
   	parasql.ui.WaitPanel.show()
   	parasql.app.execSQL(sql, function(dt) {
@@ -50,15 +50,16 @@ var tracking = function() {
   			let updateSQL = `INSERT INTO Vehicle_GeotabSync (Vehicle_GeotabSync_ID, Vehicle_ID, Location, Latitude, Longitude, LocationTS) VALUES ${updateValues}`
   			updateSQL += ' ON DUPLICATE KEY UPDATE Location=VALUES(Location), Latitude=VALUES(Latitude), Longitude=VALUES(Longitude), LocationTS=VALUES(LocationTS);'
   			parasql.app.execSQL(updateSQL, function (dt) {
-  				if (refreshId) parasql.app.getWidgetById(refreshId).performClick() // Refresh maintenance dashboard
+  				if (onSuccessCB) onSuccessCB(dt)
   				parasql.ui.WaitPanel.hide()
   			}, onError)
   		}).catch(onError)
   	}, onError)
   	
   	function onError(e) {
-  		console.log(e)
-  		parasql.ui.WaitPanel.hide()
+  		console.log(e)  		
+		onErrorCB(e)
+		parasql.ui.WaitPanel.hide()
   	}
   }
 }
