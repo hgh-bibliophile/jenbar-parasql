@@ -20,7 +20,14 @@
 	dayjs.extend(utcPlugin)
 
 	// --------
-  
+
+	let SHIFT_SAT = false;
+	let SHIFT_SUN = false;
+
+	const shiftWeekendHolidays = ({ shiftSaturdayHolidays = true, shiftSundayHolidays = true }) => {
+		SHIFT_SAT = shiftSaturdayHolidays;
+		SHIFT_SUN = shiftSundayHolidays;
+	}
 
 	const getDateFor = ({ day = 1, month, year }) =>
 		dayjs(`${year}-${month}-${day}`, "YYYY-M-D");
@@ -61,7 +68,7 @@
 
 	const allFederalHolidaysForYear = (
 		year = new Date().getFullYear(),
-		{ shiftSaturdayHolidays = true, shiftSundayHolidays = true } = {}
+		{ shiftSaturdayHolidays = SHIFT_SAT, shiftSundayHolidays = SHIFT_SUN } = {}
 	) => {
 		const holidays = [];
 
@@ -170,7 +177,7 @@
 
 	const isAHoliday = (
 		date = new Date(),
-		{ shiftSaturdayHolidays = true, shiftSundayHolidays = true, utc = false } = {}
+		{ shiftSaturdayHolidays = SHIFT_SAT, shiftSundayHolidays = SHIFT_SUN, utc = false } = {}
 	) => {
 		const newDate = utc ? dayjs.utc(date) : dayjs(date);
 		const year = newDate.year();
@@ -193,7 +200,7 @@
 	const searchForHoliday = (
 		search,
 		year = new Date().getFullYear(),
-		{ shiftSaturdayHolidays = true, shiftSundayHolidays = true, includeOtherNames = false } = {}
+		{ shiftSaturdayHolidays = SHIFT_SAT, shiftSundayHolidays = SHIFT_SUN, includeOtherNames = false } = {}
 	) => {
 		const shift = { shiftSaturdayHolidays, shiftSundayHolidays };
 
@@ -232,9 +239,10 @@
 		}
 		return candidates.filter(h => h.date >= startDate && h.date <= endDate);
 	};
-    
+
 	var holidays = {
 		isAHoliday,
+		shiftWeekendHolidays,
 		search: searchForHoliday,
 		allForYear: allFederalHolidaysForYear,
 		inRange: federalHolidaysInRange
