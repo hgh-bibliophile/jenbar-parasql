@@ -26,7 +26,7 @@ function importLibs() {
 		],
 		ico: 'https://img.icons8.com/pulsar-line/48/maintenance-date.png',
 		onLoad: { // Defines functions that can be called after the scripts listed above have been loaded.
-			'gt-api': function() {
+			gt_api: function() {
 				getAuth(dt => {
 					const auth = JSON.parse(dt.getValue(0, 'auth_results').getString())
 					const isReady = dt.getValue(0, 'auth_status').getBoolean()
