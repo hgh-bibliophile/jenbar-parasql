@@ -56,7 +56,7 @@ var utils = function() {
  	// colSortBy = an object of the form { ColumnName: "asc" or "desc", etc. }		
 	this.setSortBy = function(tableId, colSortBy, refreshQuery = false) {
 		let tbl = parasql.app.getWidgetById(tableId)
-		tbl.colmns.forEach(col => col.sortby = colSortBy[col.columnName] ?? "no")
+		tbl.columns.forEach(col => col.sortby = colSortBy[col.columnName] ?? "no")
 		if (refreshQuery) tbl.refreshQuery()
 	}
 
