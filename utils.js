@@ -53,6 +53,12 @@ var utils = function() {
 	}
 
 	
+ 	// colSorting = an object of the form { ColumnName: "asc" or "desc", etc. }		
+	this.setSorting = function(tableId, columnSorting, refreshQuery = false) {
+		let tbl = parasql.app.getWidgetById(tableId)
+		tbl.colmns.forEach(col => col.sortby = columnSorting[col.columnName] ?? "no")
+		if (refreshQuery) tbl.refreshQuery()
+	}
 
 	
 	this.expandDate = function(event) {
