@@ -185,7 +185,8 @@
 				alsoObservedAs: holiday.alsoObservedAs,
 				date: date.toDate(),
 				dateString: date.format("YYYY-MM-DD"),
-				type: holiday.type 
+				type: holiday.type,
+				isMajor: (holiday.type == HOL_MAJOR ? true : false)
 			};
 		});
 	};
