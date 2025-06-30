@@ -24,6 +24,9 @@
 	let SHIFT_SAT = false;
 	let SHIFT_SUN = false;
 
+	let HOL_MAJOR = 'Major';
+	let HOL_MINOR = 'Minor';
+
 	const shiftWeekendHolidays = ({ shiftSaturdayHolidays = true, shiftSundayHolidays = true }) => {
 		SHIFT_SAT = shiftSaturdayHolidays;
 		SHIFT_SUN = shiftSundayHolidays;
@@ -75,7 +78,8 @@
 		// New Year's Day
 		holidays.push({
 			name: `New Year's Day`,
-			date: getDateFor({ day: 1, month: 1, year })
+			date: getDateFor({ day: 1, month: 1, year }),
+			type: HOL_MAJOR 
 		});
 
 		// Birthday of Martin Luther King, Jr.
@@ -83,7 +87,8 @@
 		holidays.push({
 			name: `Martin Luther King Jr. Day`,
 			alsoObservedAs: "Birthday of Martin Luther King, Jr.",
-			date: getNthDayOf(3, 1, 1, year)
+			date: getNthDayOf(3, 1, 1, year),
+			type: HOL_MINOR
 		});
 
 		// Washington's Birthday
@@ -92,14 +97,16 @@
 		holidays.push({
 			name: "Presidents' Day",
 			alsoObservedAs: `Washington's Birthday`,
-			date: getNthDayOf(3, 1, 2, year)
+			date: getNthDayOf(3, 1, 2, year),
+			type: HOL_MINOR
 		});
 
 		// Memorial Day
 		// Last Monday of May
 		holidays.push({
 			name: `Memorial Day`,
-			date: getLastDayOf(1, 5, year)
+			date: getLastDayOf(1, 5, year),
+			type: HOL_MAJOR
 		});
 
 		if (year > 2020) {
@@ -107,21 +114,24 @@
 			holidays.push({
 				name: `Juneteenth Day`,
 				alsoObservedAs: "Juneteenth National Independence Day",
-				date: getDateFor({ day: 19, month: 6, year })
+				date: getDateFor({ day: 19, month: 6, year }),
+				type: HOL_MINOR
 			});
 		}
 
 		// Independence Day
 		holidays.push({
 			name: `Independence Day`,
-			date: getDateFor({ day: 4, month: 7, year })
+			date: getDateFor({ day: 4, month: 7, year }),
+			type: HOL_MAJOR
 		});
 
 		// Labor Day
 		// First Monday in September
 		holidays.push({
 			name: `Labor Day`,
-			date: getNthDayOf(1, 1, 9, year)
+			date: getNthDayOf(1, 1, 9, year),
+			type: HOL_MAJOR
 		});
 
 		// Columbus Day
@@ -129,26 +139,30 @@
 		holidays.push({
 			name: `Columbus Day`,
 			alsoObservedAs: "Indigenous Peoples' Day",
-			date: getNthDayOf(2, 1, 10, year)
+			date: getNthDayOf(2, 1, 10, year),
+			type: HOL_MINOR
 		});
 
 		// Veterans Day
 		holidays.push({
 			name: `Veterans Day`,
-			date: getDateFor({ day: 11, month: 11, year })
+			date: getDateFor({ day: 11, month: 11, year }),
+			type: HOL_MINOR
 		});
 		
 		// Thanksgiving Day
 		// Fourth Thursday of November
 		holidays.push({
 			name: `Thanksgiving Day`,
-			date: getNthDayOf(4, 4, 11, year)
+			date: getNthDayOf(4, 4, 11, year),
+			type: HOL_MAJOR
 		});
 		
 		// Christmas Day
 		holidays.push({
 			name: `Christmas Day`,
-			date: getDateFor({ day: 25, month: 12, year })
+			date: getDateFor({ day: 25, month: 12, year }),
+			type: HOL_MAJOR
 		});
 
 		return holidays.map(holiday => {
@@ -170,7 +184,8 @@
 				name: holiday.name,
 				alsoObservedAs: holiday.alsoObservedAs,
 				date: date.toDate(),
-				dateString: date.format("YYYY-MM-DD")
+				dateString: date.format("YYYY-MM-DD"),
+				type: holiday.type 
 			};
 		});
 	};
