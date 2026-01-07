@@ -63,7 +63,7 @@ var utils = function() {
 	// Toggles "extra" columns between hidden & visible
 	this.toggleCols = function(tableId, keepVisible, keepHidden) {
 		let tbl = parasql.app.getWidgetById(tableId)
-		tbl.colmns.forEach(col => {
+		tbl.columns.forEach(col => {
 			if (!hideCols.includes(col.columnName) && !keepCols.includes(col.columnName)) {
 				let tblCol = tbl.getColumn(col.tableName, col.columnName)
 				tblCol.setHidden(!tblCol.isHidden)
