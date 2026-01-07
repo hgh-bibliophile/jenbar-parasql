@@ -60,6 +60,17 @@ var utils = function() {
 		if (refreshQuery) tbl.refreshQuery()
 	}
 
+	// Toggles "extra" columns between hidden & visible
+	this.toggleCols = function(tableId, keepVisible, keepHidden) {
+		let tbl = parasql.app.getWidgetById(tableId)
+		tbl.colmns.forEach(col => {
+			if (!hideCols.includes(col.columnName) && !keepCols.includes(col.columnName)) {
+				let tblCol = tbl.getColumn(col.tableName, col.columnName)
+				tblCol.setHidden(!tblCol.isHidden)
+			}
+		})
+		tbl.redisplay()
+	}
 	
 	this.expandDate = function(event) {
 		let domTarget = event.domEvent.target;
