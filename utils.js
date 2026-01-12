@@ -64,7 +64,7 @@ var utils = function() {
 	this.toggleCols = function(tableId, keepVisible, keepHidden) {
 		let tbl = parasql.app.getWidgetById(tableId)
 		tbl.columns.forEach(col => {
-			if (!hideCols.includes(col.columnName) && !keepCols.includes(col.columnName)) {
+			if (!keepHidden.includes(col.columnName) && !keepVisible.includes(col.columnName)) {
 				let tblCol = tbl.getColumn(col.tableName, col.columnName)
 				tblCol.setHidden(!tblCol.isHidden)
 			}
