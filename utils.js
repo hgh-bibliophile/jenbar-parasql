@@ -73,6 +73,7 @@ var utils = function() {
 	}
 	
 	this.expandDate = function(event) {
+		let id = event.target.widgetId;
 		let domTarget = event.domEvent.target;
 		// check for jQuery keydown events on the dom input element...
 		if (!($._data(domTarget, "events"))?.keydown) {
