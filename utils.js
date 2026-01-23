@@ -110,6 +110,7 @@ var utils = function() {
 	}
 
 	this.expandHour = function(event) {
+		let id = event.target.widgetId;
 		let domTarget = event.domEvent.target;
 		// check for jQuery keydown events on the dom input element...
 		if (!($._data(domTarget, "events"))?.keydown) {
@@ -120,6 +121,19 @@ var utils = function() {
 				if ([9, 13].includes(e.keyCode || e.which)) {
 					// check the input value for ":x"...
 					let tStr = $target.val();
+					if (!tStr) {
+						event.domEvent.target.addEventListener("change", (event) => {
+							let dv = parasql.app.getWidgetById(id)
+							if (dv.getDataValue().value.slice(0, 3) == "NaN")
+								dv.setDataValueNull()
+						}, {once : true});
+						return;
+					}
+					if (tStr.match(/^\d{4}$/)) {
+						tStr = tStr.slice(0, 2) + ":" + tStr.slice(2)
+						$target.val(tStr);
+						return;
+					}
 					if (!tStr.match(/:\w+$/)) {
 						// if missing, add ":00" (or "00" if ":" is the last character) 
 						// so parasql will accept it
