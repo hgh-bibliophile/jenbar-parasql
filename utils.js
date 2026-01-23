@@ -83,7 +83,15 @@ var utils = function() {
 				if ([9, 13].includes(e.keyCode || e.which)) {
 					// check the input value for "/yyyy"...
 					let dStr = $target.val();
-					if (!dStr || dStr.startsWith("/")) return;
+					//if (!dStr || dStr.startsWith("/")) return;
+					if (!dStr || dStr.startsWith("/")) {
+						event.domEvent.target.addEventListener("change", (event) => {
+							let dv = parasql.app.getWidgetById(id)
+							if (dv.getDataValue().value == "NaN-NaN-NaN")
+								dv.setDataValueNull()
+						}, {once : true});
+						return;
+					}
 					if (!dStr.match(/^(\d{1,2}\/){2}\d{4}$/)) { // Proper m/d/yyyy format
 						let dtPts = dStr.split("/")
 						if (dtPts.length == 3 && dtPts[2]?.length <= 2) { // m/d/y or /yy
