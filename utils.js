@@ -89,14 +89,12 @@ var utils = function() {
 			let tbl = parasql.app.getWidgetById(tableId)
 			
 			tbl._origColumns ??= tbl.columns
-
-			//let workingCols = columns.map((col, i) => ({idx: i, name: col.columnName, hidden: col.isHidden})).filter(arr => !arr.hidden) 
 			let workingCols = _.sortBy(tbl._origColumns.map((col, i) => ({idx: i, name: col.columnName, hidden: col.isHidden})), 'hidden')
 	
 			let ct = 0
 			workingCols.forEach(col => {
 				if (col.isHidden) col.newIdx = col.idx
-				if (colOrder.includes(col.name)) {
+				if (viewColOrder.includes(col.name)) {
 					col.newIdx = workingCols[viewColOrder.indexOf(col.name)].idx
 				} else {
 					col.newIdx = workingCols[viewColOrder.length + ct].idx
