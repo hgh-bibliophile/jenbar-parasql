@@ -71,6 +71,48 @@ var utils = function() {
 		})
 		tbl.redisplay()
 	}
+
+	// Toggles between the original column order & a new order with the specified columns moved to the front
+	this.toggleView = function(tableId, viewColOrder) {
+
+		let tbl = parasql.app.getWidgetById(tableId)
+		
+		if (!tbl._origColumns) {
+			orderCols(tableId, viewColOrder)	
+		} else {
+			tbl.columns = tbl._origColumns
+			tbl._origColumns = null
+			tbl.redisplay()
+		}
+
+		function orderCols(tableId, viewColOrder) {
+			let tbl = parasql.app.getWidgetById(tableId)
+			
+			tbl._origColumns ??= tbl.columns
+
+			//let workingCols = columns.map((col, i) => ({idx: i, name: col.columnName, hidden: col.isHidden})).filter(arr => !arr.hidden) 
+			let workingCols = _.sortBy(tbl._origColumns.map((col, i) => ({idx: i, name: col.columnName, hidden: col.isHidden})), 'hidden')
+	
+			let ct = 0
+			workingCols.forEach(col => {
+				if (col.isHidden) col.newIdx = col.idx
+				if (colOrder.includes(col.name)) {
+					col.newIdx = workingCols[viewColOrder.indexOf(col.name)].idx
+				} else {
+					col.newIdx = workingCols[viewColOrder.length + ct].idx
+					ct++
+				}
+			})	
+	
+			let newCols = []
+			workingCols = _.sortBy(workingCols, 'newIdx')
+			workingCols.forEach(col => newCols.push(tbl._origColumns[col.idx]))
+	
+			tbl.columns = newCols
+			tbl.redisplay()
+		}
+
+	}
 	
 	this.expandDate = function(event) {
 		let id = event.target.widgetId;
