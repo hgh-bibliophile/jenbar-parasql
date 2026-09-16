@@ -7,7 +7,7 @@ var tracking = function() {
   	parasql.app.execSQL(sql, function(dt) {
   		let vehicles = dt.getRows().map(({ values }, i) => {
   			return {
-  				index: i, 
+  				//index: i, 
   				vehicleId: values[0].getNumber(), 
   				geotabId: values[1].getString()
   			}
@@ -17,11 +17,14 @@ var tracking = function() {
   		.then(vehicleInfo => {
   			vehicleInfo.forEach((vInfo, i) => {
   				vInfo = vInfo[0]
-  				vehicles[i].isDriving = vInfo.isDriving
-  				if (vInfo.isDriving) vehicles[i].location = '(Driving)'
-  				vehicles[i].locationTS = vInfo.dateTime
-  				vehicles[i].coordinates = { x: vInfo.longitude, y: vInfo.latitude }
+				if (vInfo) {
+	  				vehicles[i].isDriving = vInfo.isDriving
+	  				if (vInfo.isDriving) vehicles[i].location = '(Driving)'
+	  				vehicles[i].locationTS = vInfo.dateTime
+	  				vehicles[i].coordinates = { x: vInfo.longitude, y: vInfo.latitude }
+				}
   			})
+			vehicles = vehicles.filter(v => v.coordinates)
   			return jb.gt.api.call("GetAddresses",{coordinates:vehicles.map(v => v.coordinates)})
   		}).then(addressResults => {
   			let zoneIds = new Set()
