@@ -284,9 +284,8 @@ var utils = function() {
 					const newRowIdx = e.target.closest('.multiselect-box').getAttribute('data-parasql-row-multiselect')
 					
 					if (e.shiftKey) {
-						if (newRowIdx > curRowIdx) for (let i = curRowIdx+1; i < newRowIdx; i++) selectRow(i)
-						else if (newRowIdx < curRowIdx) for (let i = curRowIdx-1; i > newRowIdx; i--) selectRow(i)
-						else if (!tbl.getDataTable().getRowAt(curRowIdx).getIsSelected()) selectRow(curRowIdx)
+						if (newRowIdx > curRowIdx) for (let i = curRowIdx; i < newRowIdx; i++) selectRow(i)
+						else if (newRowIdx < curRowIdx) for (let i = curRowIdx; i > newRowIdx; i--) selectRow(i)
 				
 						window.getSelection().removeAllRanges() // Removes text selection
 					}
