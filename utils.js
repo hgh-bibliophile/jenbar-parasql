@@ -280,7 +280,7 @@ var utils = function() {
 			if (dc.columnName == lastCol) {
 				// Listens for 'mousedown' instead of 'click' event -> fires before parasql click event listener updates the selected index
 				dc.dataCellDiv.parentElement.querySelector('.multiselect-box').addEventListener('mousedown', e => {
-					const curRowIdx = tbl.getSelectedRowIndex()
+					const curRowIdx = tblWidget.getSelectedRowIndex()
 					const newRowIdx = e.target.closest('.multiselect-box').getAttribute('data-parasql-row-multiselect')
 					
 					if (e.shiftKey) {
