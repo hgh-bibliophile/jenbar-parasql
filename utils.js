@@ -271,7 +271,33 @@ var utils = function() {
 				tblWidget.widgetDiv.tabIndex = 0
 				tblWidget.widgetDiv.style.outline = 'none'
 			}
-		}	
+		},
+		addShiftSelect: function (tblWidget) {
+			const lastCol = tblWidget.columns.filter(c => !c.isHidden).slice(-1)[0].columnName
+			const dc = tblWidget.getLastRenderedDataCell()
+
+			// Last column of each row
+			if (dc.columnName == lastCol) {
+				// Listens for 'mousedown' instead of 'click' event -> fires before parasql click event listener updates the selected index
+				dc.dataCellDiv.parentElement.querySelector('.multiselect-box').addEventListener('mousedown', e => {
+					const curRowIdx = tbl.getSelectedRowIndex()
+					const newRowIdx = e.target.closest('.multiselect-box').getAttribute('data-parasql-row-multiselect')
+					
+					if (e.shiftKey) {
+						if (newRowIdx > curRowIdx) for (let i = curRowIdx+1; i < newRowIdx; i++) selectRow(i)
+						else if (newRowIdx < curRowIdx) for (let i = curRowIdx-1; i > newRowIdx; i--) selectRow(i)
+						else if (!tbl.getDataTable().getRowAt(curRowIdx).getIsSelected()) selectRow(curRowIdx)
+				
+						window.getSelection().removeAllRanges() // Removes text selection
+					}
+					
+					function selectRow(i) {
+						tblWidget.getDataTable().getRowAt(i).setSelected(true)
+						tblWidget.widgetDiv.querySelector(`[data-parasql-row-multiselect="${i}"] i`).innerHTML = 'check_box'
+					}
+				})
+			}
+		}
 	}
 
 
