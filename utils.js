@@ -221,7 +221,7 @@ var utils = function() {
 							break;
 						case keyCodes.esc:
 							if (tbl.isMultiSelect()) {
-								tbl.getDataDable().getRows().forEach(r => r.getIsSelected() && r.setIsSelected(false))
+								tbl.getDataTable().getRows().forEach(r => r.getIsSelected() && r.setIsSelected(false))
 							}
 							tbl.redisplay()
 							break;
