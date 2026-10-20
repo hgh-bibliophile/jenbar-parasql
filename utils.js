@@ -300,8 +300,8 @@ var utils = function() {
 					_curRowIdx = null
 					
 					if (e.shiftKey) {
-						if (newRowIdx > _curRowIdx) for (let i = _curRowIdx; i < newRowIdx; i++) selectRow(i) // Going down
-						else if (newRowIdx < _curRowIdx) for (let i = _curRowIdx; i > newRowIdx; i--) selectRow(i) // Going up
+						if (newRowIdx > curRowIdx) for (let i = curRowIdx; i < newRowIdx; i++) selectRow(i) // Going down
+						else if (newRowIdx < curRowIdx) for (let i = curRowIdx; i > newRowIdx; i--) selectRow(i) // Going up
 						window.getSelection().removeAllRanges() // Removes text selection
 					}
 
