@@ -295,6 +295,7 @@ var utils = function() {
 				msbox.addEventListener('mousedown', e => {
 					_curRowIdx = tblWidget.getSelectedRowIndex()
 					_newRowIdx = e.target.closest('.multiselect-box').getAttribute('data-parasql-row-multiselect')
+					if (e.shiftKey) window.getSelection().removeAllRanges() // Removes text selection
 				})
 				msbox.addEventListener('click', e => {
 					const curRowIdx = _curRowIdx
@@ -304,7 +305,7 @@ var utils = function() {
 					if (e.shiftKey) {
 						if (newRowIdx > curRowIdx) for (let i = curRowIdx; i < newRowIdx; i++) selectRow(i) // Going down
 						else if (newRowIdx < curRowIdx) for (let i = curRowIdx; i > newRowIdx; i--) selectRow(i) // Going up
-						window.getSelection().removeAllRanges() // Removes text selection
+						//window.getSelection().removeAllRanges() // Removes text selection
 					}
 
 					function selectRow(i) {
