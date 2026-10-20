@@ -279,7 +279,10 @@ var utils = function() {
 				tblWidget.widgetDiv.style.outline = 'none'
 			}
 		},
-		addShiftSelect: function (tblWidget) {
+		applyTo: function (tblWidget, shiftSelect = true) {
+			this.makeFocusable(tblWidget) // Needed to make the report "focusable"
+			if (!shiftSelect) return
+			
 			const lastCol = tblWidget.columns.filter(c => !c.isHidden).slice(-1)[0].columnName
 			const dc = tblWidget.getLastRenderedDataCell()
 
