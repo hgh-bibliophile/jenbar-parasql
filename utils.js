@@ -288,16 +288,18 @@ var utils = function() {
 
 			// Last column of each row
 			if (dc.columnName == lastCol) {
-				let _curRowIdx = null
+				let _curRowIdx, _newRowIdx
+				
 				// Listens for 'mousedown' first instead of 'click' event -> fires before parasql click event listener updates the selected index
 				const msbox = dc.dataCellDiv.parentElement.querySelector('.multiselect-box')
 				msbox.addEventListener('mousedown', e => {
 					_curRowIdx = tblWidget.getSelectedRowIndex()
+					_newRowIdx = e.target.closest('.multiselect-box').getAttribute('data-parasql-row-multiselect')
 				})
 				msbox.addEventListener('click', e => {
 					const curRowIdx = _curRowIdx
-					const newRowIdx = e.target.closest('.multiselect-box').getAttribute('data-parasql-row-multiselect')
-					_curRowIdx = null
+					const newRowIdx = _newRowIdx
+					_curRowIdx = _newRowIdx = null
 					
 					if (e.shiftKey) {
 						if (newRowIdx > curRowIdx) for (let i = curRowIdx; i < newRowIdx; i++) selectRow(i) // Going down
