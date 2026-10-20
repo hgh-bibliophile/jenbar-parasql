@@ -194,10 +194,11 @@ var utils = function() {
 		setup: function(tblId) {
 			$('body').off('keydown').on('keydown', e => {
 				const keyCodes = {
-					enter: 13,
-					space: 32,
-					up: 38,
-					down: 40
+					enter: 'Enter', //13,
+					space: ' ', //32,
+					up: 'ArrowUp', //38,
+					down: 'ArrowDown',//40,
+					esc: 'Escape'
 				}
 	
 				const tbl = parasql.app.getWidgetById(tblId)
@@ -208,7 +209,7 @@ var utils = function() {
 					e.preventDefault()
 					const rowIdx = tbl.getSelectedRowIndex()
 					const rowCt = tbl.getDataTable().rows.length
-					switch (e.keyCode) {
+					switch (e.key) { // change from decrepidated .keyCode
 						case keyCodes.space: 
 							if (tbl.isMultiSelect()) {
 								let row = tbl.getDataTable().getRowAt(rowIdx)
@@ -217,6 +218,12 @@ var utils = function() {
 								$(tbl.widgetDiv).find(`[data-parasql-row-multiselect=${rowIdx}] i`)
 									.html(row.getIsSelected() ? 'check_box' : 'check_box_outline_blank')
 							}
+							break;
+						case keyCodes.esc:
+							if (tbl.isMultiSelect()) {
+								tbl.getDataDable().getRows().forEach(r => r.getIsSelected() && r.setIsSelected(false))
+							}
+							tbl.redisplay()
 							break;
 						case keyCodes.up:
 							tbl.setSelectedRowIndex(Math.max(rowIdx - 1, 0))
