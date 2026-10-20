@@ -279,7 +279,7 @@ var utils = function() {
 				tblWidget.widgetDiv.style.outline = 'none'
 			}
 		},
-		enableOn: function (tblWidget, shiftSelect = true) {
+		enable: function (tblWidget, shiftSelect = true) {
 			this.makeFocusable(tblWidget) // Needed to make the report "focusable"
 			if (!shiftSelect) return
 			
