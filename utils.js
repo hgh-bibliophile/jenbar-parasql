@@ -205,7 +205,7 @@ var utils = function() {
 	
 				if (!tbl.isVisible()) {
 					$(this).off(e)
-				} else if (e.target == tbl.widgetDiv && Object.values(keyCodes).includes(e.keyCode)) {
+				} else if (e.target == tbl.widgetDiv && Object.values(keyCodes).includes(e.key)) {
 					e.preventDefault()
 					const rowIdx = tbl.getSelectedRowIndex()
 					const rowCt = tbl.getDataTable().rows.length
