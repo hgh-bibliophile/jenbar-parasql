@@ -289,27 +289,27 @@ var utils = function() {
 			// Last column of each row
 			if (dc.columnName == lastCol) {
 				let _curRowIdx = null
-				// Listens for 'mousedown' instead of 'click' event -> fires before parasql click event listener updates the selected index
-				dc.dataCellDiv.parentElement.querySelector('.multiselect-box')
-					.addEventListener('mousedown', e => {
-						_curRowIdx = tblWidget.getSelectedRowIndex()
-					})
-					.addEventListener('click', e => {
-						const curRowIdx = _curRowIdx
-						const newRowIdx = e.target.closest('.multiselect-box').getAttribute('data-parasql-row-multiselect')
-						_curRowIdx = null
-						
-						if (e.shiftKey) {
-							if (newRowIdx > _curRowIdx) for (let i = _curRowIdx; i < newRowIdx; i++) selectRow(i) // Going down
-							else if (newRowIdx < _curRowIdx) for (let i = _curRowIdx; i > newRowIdx; i--) selectRow(i) // Going up
-							window.getSelection().removeAllRanges() // Removes text selection
-						}
-	
-						function selectRow(i) {
-							tblWidget.getDataTable().getRowAt(i).setSelected(true)
-							tblWidget.widgetDiv.querySelector(`[data-parasql-row-multiselect="${i}"] i`).innerHTML = 'check_box'
-						}
-					})
+				// Listens for 'mousedown' first instead of 'click' event -> fires before parasql click event listener updates the selected index
+				const msbox = dc.dataCellDiv.parentElement.querySelector('.multiselect-box')
+				msbox.addEventListener('mousedown', e => {
+					_curRowIdx = tblWidget.getSelectedRowIndex()
+				})
+				msbox.addEventListener('click', e => {
+					const curRowIdx = _curRowIdx
+					const newRowIdx = e.target.closest('.multiselect-box').getAttribute('data-parasql-row-multiselect')
+					_curRowIdx = null
+					
+					if (e.shiftKey) {
+						if (newRowIdx > _curRowIdx) for (let i = _curRowIdx; i < newRowIdx; i++) selectRow(i) // Going down
+						else if (newRowIdx < _curRowIdx) for (let i = _curRowIdx; i > newRowIdx; i--) selectRow(i) // Going up
+						window.getSelection().removeAllRanges() // Removes text selection
+					}
+
+					function selectRow(i) {
+						tblWidget.getDataTable().getRowAt(i).setSelected(true)
+						tblWidget.widgetDiv.querySelector(`[data-parasql-row-multiselect="${i}"] i`).innerHTML = 'check_box'
+					}
+				})
 			}
 		}
 	}
