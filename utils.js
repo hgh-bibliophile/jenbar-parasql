@@ -221,9 +221,9 @@ var utils = function() {
 							break;
 						case keyCodes.esc:
 							if (tbl.isMultiSelect()) {
-								tbl.getDataTable().getRows().forEach(r => r.getIsSelected() && r.setIsSelected(false))
+								tbl.getDataTable().getRows().forEach(r => r.getIsSelected() && r.setSelected(false))
+								tbl.widgetDiv.querySelectorAll('[data-parasql-row-multiselect] i').forEach(i => i.innerHTML = 'check_box_outline_blank')
 							}
-							tbl.redisplay()
 							break;
 						case keyCodes.up:
 							tbl.setSelectedRowIndex(Math.max(rowIdx - 1, 0))
