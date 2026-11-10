@@ -675,8 +675,8 @@ this.DataCache = class {
         this._qs = setupQS
 
         this._baseSQL = `SELECT ${this.columns} FROM ${this.table}`
-        this._data = null    
-        this._queue = []   
+        this._data = []
+        this._queue = []
     }
 
     _getListSQL(whereClause=null) {
@@ -703,16 +703,15 @@ this.DataCache = class {
             })
         }
     }
-    _processRow(dr) {
-        return dr.values.reduce((acc, current, index) => {
-            acc[dt.getColumnAt(index).columnName.toLowerCase()] = current.value;
-            return acc;
-        }, {})     
-    }
     _processData(dt, append=false) {
-        const data = dt.getRows().map(this._processRow)
-        if (append) this._data = (this._data || []).concat(data)
-        else this._data = data
+        function processRow(dr) {
+            return dr.values.reduce((acc, current, index) => {
+                acc[dt.getColumnAt(index).columnName.toLowerCase()] = current.value;
+                return acc;
+            }, {})     
+        }
+        const data = dt.getRows().map(processRow)
+        this._data = append ? this._data.concat(data) : data
     }
     get data() {
         return this._data
