@@ -733,7 +733,7 @@ var utils = function() {
 	        }
 	    }
 	    Select(psqlFieldId, htmlWidget, config={}) {
-	        return new JBSelect(this, psqlFieldId, htmlWidget, config)
+	        return new _utils.JBSelect(this, psqlFieldId, htmlWidget, config)
 	    }
 	}
 	
