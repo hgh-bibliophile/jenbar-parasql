@@ -663,167 +663,163 @@ var utils = function() {
 		})
 	}
 
-this.DataCache = class {
-    constructor(tbl, idCol, nameCol, {otherCols, whereClause, orderBy='label', setupQS}={}) {
-        this.table = tbl
-        this.pk = idCol
-        this.columns = [idCol+' AS value', nameCol+' AS label']
-        if (otherCols) this.columns = this.columns.concat(otherCols)
-        this.where = whereClause
-        this.orderBy = orderBy
-
-        this._qs = setupQS
-
-        this._baseSQL = `SELECT ${this.columns} FROM ${this.table}`
-        this._data = []
-        this._queue = []
-    }
-
-    _getListSQL(whereClause=null) {
-        let where = whereClause || this.where
-        return this._baseSQL + (where ? ' WHERE ' + where : '') + ' ORDER BY ' + this.orderBy + ';'
-
-    }
-    _getIdSQL(id) {
-        return this._baseSQL + ` WHERE ${this.pk} = ${id}` 
-    }
-    exec(runSilent=true) {
-        return _utils.sql.exec(this._getListSQL(), runSilent).then(dt => {
-            this._processData(dt)
-            return this
-        })
-    }
-    query(id, runSilent=false) {
-        if (this._inQueue(id)) {
-            return Promise.resolve(this)
-        } else {
-            return _utils.sql.exec(this._getIdSQL(id), runSilent).then(dt => {
-                this._processData(dt, true)
-                return this
-            })
-        }
-    }
-    _processData(dt, append=false) {
-        function processRow(dr) {
-            return dr.values.reduce((acc, current, index) => {
-                acc[dt.getColumnAt(index).columnName.toLowerCase()] = current.value;
-                return acc;
-            }, {})     
-        }
-        const data = dt.getRows().map(processRow)
-        this._data = append ? this._data.concat(data) : data
-    }
-    get data() {
-        return this._data
-    }
-    _inQueue(id) {
-        return this._queue.includes(id) ||  this._queue.push(id) > 0
-    }
-    nativeSearch(applyId, onApply=null) {
-        if (this._qs)  {
-            const qs = this._qs({ [this.pk]: applyId})
-            if (onApply) qs.apply = function () {
-                this._qs.prototype.apply.call(this)
-                onApply()
-            }
-            return qs
-        } else {
-            this._idWidget.widgetDiv.querySelector('i').click()
-            return null
-        }
-    }
-    Select(psqlFieldId, htmlWidget, config={}) {
-        return new JBSelect(this, psqlFieldId, htmlWidget, config)
-    }
-}
-
-this.JBSelect = class {
-    constructor(dataCache, psqlFieldId, htmlWidget, {filter, afterQuickSearch, ...opts}={}) {
-        this.dataCache = dataCache
-        this._psqlId = psqlFieldId
-        this._selectId = 'vsel-' + this._psqlId
-        this._idWidget = parasql.app.getWidgetById(this._psqlId)
-        this._idDataValue = this._idWidget.getDataValue()
-        this._htmlWidget = htmlWidget
-
-        this._dataCacheFilter = filter
-        this._afterQuickSearch = afterQuickSearch
-        this._opts = opts
-
-        return this._display()
-    }
-    _display() {
-        // Keeps from throwing an error when a search on the underlying table refreshes the hidden modal panel
-        if (!this._htmlWidget?.isVisible()) return
-    
-        // Clear the placeholder html (for clarity in the editor view) & set up a container div tagged with the linked psql widget id
-        this._htmlWidget.getContentDiv().innerHTML = `<div id="${this._selectId}"></div>`
-        
-        // 
-        this.$sel = new Select('#' + this._selectId, Object.assign({
-            options: this._dataCacheFilter ? this.dataCache.data : this.dataCache.data.filter(this._dataCacheFilter),
-            value: this.dv,
-            onChange: (val) => this.dv = val,
-            onOpen: function (sel) {
-                sel.panel.onkeydown = e => { if (e.code == 'Tab') sel._control.focus() }
-            }
-        }, this._opts))
-
-        // If the linked field's current value is not in the cached list, query for just that id
-        if (!this.$sel.getValue() && this._idDataValue.isNotNull()) {
-            this.dataCache.query(id).then(this._triggerRedisplay)
-        }
-
-        // Ctrl+click opens QuickSearch or native PickList panel
-        this.$sel._control.removeEventListener('click', this.$sel._onControlClick)
-        this.$sel._control.onclick = e => {
-            if (this.$sel.opts.disabled) return
-            if (e.ctrlKey) {
-                this.dataCache.nativeSearch(this._psqlId, this._afterQuickSearch)
-            } else {
-                this.$sel._onControlClick(e)	
-            }
-        }
-
-        this.$sel.el.onkeydown = e => { 
-            if (/*sel.opts.clearable &&*/ e.code == 'Backspace') this.$sel.setValue(null) 
-            else if (e.code.startsWith('Key') && !this.$sel.isOpen) this.$sel.open()
-        }
-    
-        this.$sel.el.querySelector('.vsel-control').style.height = this.width
-        this.$sel.el.querySelector('.vsel').style.width = this.height
-        this.$sel.panel.style.width = this.width
-
-        return this
-    }
-    _triggerRedisplay() {
-        this._htmlWidget.redisplay()
-    }
-	// Widget DataValue
-    get dv() {
-        return this._idDataValue.getNumber()
-    }
-    set dv(v) {
-        if (v == null) this._idDataValue.setNull()
-        else this._idDataValue.setNumber(v)
-    }
-	// Select value
-	get value() {
-		return this.$sel.getValue()
-	}
-	set value(v) {
-		this.$sel.setValue(v)
-	}
-	// HTML widget dimensions
-    get width() {
-        return this.htmlWidget.getWidth() + 'px'
-    }
-    get height() {
-        return this.htmlWidget.getHeight() + 'px'
-    }
-}
-
-
-
+	this.DataCache = class {
+	    constructor(tbl, idCol, nameCol, {otherCols, whereClause, orderBy='label', setupQS}={}) {
+	        this.table = tbl
+	        this.pk = idCol
+	        this.columns = [idCol+' AS value', nameCol+' AS label']
+	        if (otherCols) this.columns = this.columns.concat(otherCols)
+	        this.where = whereClause
+	        this.orderBy = orderBy
 	
-} 
+	        this._qs = setupQS
+	
+	        this._baseSQL = `SELECT ${this.columns} FROM ${this.table}`
+	        this._data = []
+	        this._queue = []
+	    }
+	
+	    _getListSQL(whereClause=null) {
+	        let where = whereClause || this.where
+	        return this._baseSQL + (where ? ' WHERE ' + where : '') + ' ORDER BY ' + this.orderBy + ';'
+	
+	    }
+	    _getIdSQL(id) {
+	        return this._baseSQL + ` WHERE ${this.pk} = ${id}` 
+	    }
+	    exec(runSilent=true) {
+	        return _utils.sql.exec(this._getListSQL(), runSilent).then(dt => {
+	            this._processData(dt)
+	            return this
+	        })
+	    }
+	    query(id, runSilent=false) {
+	        if (this._inQueue(id)) {
+	            return Promise.resolve(this)
+	        } else {
+	            return _utils.sql.exec(this._getIdSQL(id), runSilent).then(dt => {
+	                this._processData(dt, true)
+	                return this
+	            })
+	        }
+	    }
+	    _processData(dt, append=false) {
+	        function processRow(dr) {
+	            return dr.values.reduce((acc, current, index) => {
+	                acc[dt.getColumnAt(index).columnName.toLowerCase()] = current.value;
+	                return acc;
+	            }, {})     
+	        }
+	        const data = dt.getRows().map(processRow)
+	        this._data = append ? this._data.concat(data) : data
+	    }
+	    get data() {
+	        return this._data
+	    }
+	    _inQueue(id) {
+	        return this._queue.includes(id) ||  this._queue.push(id) > 0
+	    }
+	    nativeSearch(applyId, onApply=null) {
+	        if (this._qs)  {
+	            const qs = this._qs({ [this.pk]: applyId})
+	            if (onApply) qs.apply = function () {
+	                this._qs.prototype.apply.call(this)
+	                onApply()
+	            }
+	            return qs
+	        } else {
+	            this._idWidget.widgetDiv.querySelector('i').click()
+	            return null
+	        }
+	    }
+	    Select(psqlFieldId, htmlWidget, config={}) {
+	        return new JBSelect(this, psqlFieldId, htmlWidget, config)
+	    }
+	}
+	
+	this.JBSelect = class {
+	    constructor(dataCache, psqlFieldId, htmlWidget, {filter, afterQuickSearch, ...opts}={}) {
+	        this.dataCache = dataCache
+	        this._psqlId = psqlFieldId
+	        this._selectId = 'vsel-' + this._psqlId
+	        this._idWidget = parasql.app.getWidgetById(this._psqlId)
+	        this._idDataValue = this._idWidget.getDataValue()
+	        this._htmlWidget = htmlWidget
+	
+	        this._dataCacheFilter = filter
+	        this._afterQuickSearch = afterQuickSearch
+	        this._opts = opts
+	
+	        return this._display()
+	    }
+	    _display() {
+	        // Keeps from throwing an error when a search on the underlying table refreshes the hidden modal panel
+	        if (!this._htmlWidget?.isVisible()) return
+	    
+	        // Clear the placeholder html (for clarity in the editor view) & set up a container div tagged with the linked psql widget id
+	        this._htmlWidget.getContentDiv().innerHTML = `<div id="${this._selectId}"></div>`
+	        
+	        // 
+	        this.$sel = new Select('#' + this._selectId, Object.assign({
+	            options: this._dataCacheFilter ? this.dataCache.data : this.dataCache.data.filter(this._dataCacheFilter),
+	            value: this.dv,
+	            onChange: (val) => this.dv = val,
+	            onOpen: function (sel) {
+	                sel.panel.onkeydown = e => { if (e.code == 'Tab') sel._control.focus() }
+	            }
+	        }, this._opts))
+	
+	        // If the linked field's current value is not in the cached list, query for just that id
+	        if (!this.$sel.getValue() && this._idDataValue.isNotNull()) {
+	            this.dataCache.query(id).then(this._triggerRedisplay)
+	        }
+	
+	        // Ctrl+click opens QuickSearch or native PickList panel
+	        this.$sel._control.removeEventListener('click', this.$sel._onControlClick)
+	        this.$sel._control.onclick = e => {
+	            if (this.$sel.opts.disabled) return
+	            if (e.ctrlKey) {
+	                this.dataCache.nativeSearch(this._psqlId, this._afterQuickSearch)
+	            } else {
+	                this.$sel._onControlClick(e)	
+	            }
+	        }
+	
+	        this.$sel.el.onkeydown = e => { 
+	            if (/*sel.opts.clearable &&*/ e.code == 'Backspace') this.$sel.setValue(null) 
+	            else if (e.code.startsWith('Key') && !this.$sel.isOpen) this.$sel.open()
+	        }
+	    
+	        this.$sel.el.querySelector('.vsel-control').style.height = this.width
+	        this.$sel.el.querySelector('.vsel').style.width = this.height
+	        this.$sel.panel.style.width = this.width
+	
+	        return this
+	    }
+	    _triggerRedisplay() {
+	        this._htmlWidget.redisplay()
+	    }
+		// Widget DataValue
+	    get dv() {
+	        return this._idDataValue.getNumber()
+	    }
+	    set dv(v) {
+	        if (v == null) this._idDataValue.setNull()
+	        else this._idDataValue.setNumber(v)
+	    }
+		// Select value
+		get value() {
+			return this.$sel.getValue()
+		}
+		set value(v) {
+			this.$sel.setValue(v)
+		}
+		// HTML widget dimensions
+	    get width() {
+	        return this.htmlWidget.getWidth() + 'px'
+	    }
+	    get height() {
+	        return this.htmlWidget.getHeight() + 'px'
+	    }
+	}
+}
