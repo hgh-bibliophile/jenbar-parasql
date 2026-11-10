@@ -766,7 +766,7 @@ var utils = function() {
 	                this.$sel.options.push(missingValue)
 	                this.value = this.dv
 	            }
-	            this.dataCache.query(this.dv).then(this._triggerRedisplay)
+	            this.dataCache.query(this.dv).then(() => this._triggerRedisplay())
 	        }
 	
 	        // Ctrl+click opens QuickSearch or native PickList panel
