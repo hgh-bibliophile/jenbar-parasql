@@ -771,7 +771,7 @@ var utils = function() {
 	
 	        // If the linked field's current value is not in the cached list, query for just that id
 	        if (!this.$sel.getValue() && this._idDataValue.isNotNull()) {
-	            this.dataCache.query(id).then(this._triggerRedisplay)
+	            this.dataCache.query(this.dv).then(this._triggerRedisplay)
 	        }
 	
 	        // Ctrl+click opens QuickSearch or native PickList panel
