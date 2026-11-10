@@ -761,7 +761,7 @@ var utils = function() {
 	        
 	        // 
 	        this.$sel = new Select('#' + this._selectId, Object.assign({
-	            options: this._dataCacheFilter ? this.dataCache.data : this.dataCache.data.filter(this._dataCacheFilter),
+	            options: !this._dataCacheFilter ? this.dataCache.data : this.dataCache.data.filter(this._dataCacheFilter),
 	            value: this.dv,
 	            onChange: (val) => this.dv = val,
 	            onOpen: function (sel) {
