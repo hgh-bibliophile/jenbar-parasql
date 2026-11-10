@@ -719,18 +719,8 @@ var utils = function() {
 	    _inQueue(id) {
 	        return this._queue.includes(id) ||  this._queue.push(id) > 0
 	    }
-	    nativeSearch(applyId, onApply=null) {
-	        if (this._qs)  {
-	            const qs = this._qs({ [this.pk]: applyId})
-	            if (onApply) qs.apply = function () {
-	                this._qs.prototype.apply.call(this)
-	                onApply()
-	            }
-	            return qs
-	        } else {
-	            this._idWidget.widgetDiv.querySelector('i').click()
-	            return null
-	        }
+	    qs(widgetId) {
+	        return this._qs ? this._qs({[this.pk]: widgetId}) : null
 	    }
 	    Select(psqlFieldId, htmlWidget, config={}) {
 	        return new _utils.JBSelect(this, psqlFieldId, htmlWidget, config)
@@ -774,7 +764,7 @@ var utils = function() {
 				let missingValue = this.dataCache.data.find(v => v.value == this.dv)
 	            if (missingValue) {
 	                this.$sel.options.push(missingValue)
-	                this.$sel.setValue(this.dv, {silent: true})
+	                this.value = this.dv
 	            }
 	            this.dataCache.query(this.dv).then(this._triggerRedisplay)
 	        }
@@ -784,7 +774,7 @@ var utils = function() {
 	        this.$sel._control.onclick = e => {
 	            if (this.$sel.opts.disabled) return
 	            if (e.ctrlKey) {
-	                this.dataCache.nativeSearch(this._psqlId, this._afterQuickSearch)
+	                this.dataCache.nativeSearch()
 	            } else {
 	                this.$sel._onControlClick(e)	
 	            }
@@ -800,6 +790,21 @@ var utils = function() {
 	        this.$sel.panel.style.width = this.width
 	
 	        return this
+	    }
+		launchNativeSearch(afterApply=this._afterQuickSearch) {
+	        const qs = this.dataCache.qs(this._psqlId)
+	        if (qs) {
+	            let _apply = qs.apply
+	            qs.apply = () => {
+	                _apply()//.call(this)
+	                this.value = this.dv
+	                if (afterApply) afterApply()
+	            }
+	            return qs
+	        } else {
+	            this._idWidget.widgetDiv.querySelector('i').click()
+	            return null
+	        }
 	    }
 	    _triggerRedisplay() {
 	        this._htmlWidget.redisplay()
@@ -817,7 +822,7 @@ var utils = function() {
 			return this.$sel.getValue()
 		}
 		set value(v) {
-			this.$sel.setValue(v)
+			this.$sel.setValue(v, {silent: true})
 		}
 		// HTML widget dimensions
 	    get width() {
