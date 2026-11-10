@@ -774,7 +774,7 @@ var utils = function() {
 				let missingValue = this.dataCache.data.find(v => v.value == this.dv)
 	            if (missingValue) {
 	                this.$sel.options.push(missingValue)
-	                this.$sel.setValue(this.dv)
+	                this.$sel.setValue(this.dv, {silent: true})
 	            }
 	            this.dataCache.query(this.dv).then(this._triggerRedisplay)
 	        }
@@ -810,7 +810,7 @@ var utils = function() {
 	    }
 	    set dv(v) {
 	        if (v == null) this._idDataValue.setNull()
-	        else this._idDataValue.setNumber(v)
+	        else this._idDataValue.setNumber(Number(v))
 	    }
 		// Select value
 		get value() {
