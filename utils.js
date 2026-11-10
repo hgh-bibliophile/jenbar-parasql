@@ -771,6 +771,11 @@ var utils = function() {
 	
 	        // If the linked field's current value is not in the cached list, query for just that id
 	        if (!this.$sel.getValue() && this._idDataValue.isNotNull()) {
+				let missingValue = this.dataCache.data.find(v => v.value == this.dv)
+	            if (missingValue) {
+	                this.$sel.options.push(missingValue)
+	                this.$sel.setValue(this.dv)
+	            }
 	            this.dataCache.query(this.dv).then(this._triggerRedisplay)
 	        }
 	
