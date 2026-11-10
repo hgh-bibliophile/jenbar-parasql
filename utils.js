@@ -816,10 +816,10 @@ var utils = function() {
 		}
 		// HTML widget dimensions
 	    get width() {
-	        return this.htmlWidget.getWidth() + 'px'
+	        return this._htmlWidget.getWidth() + 'px'
 	    }
 	    get height() {
-	        return this.htmlWidget.getHeight() + 'px'
+	        return this._htmlWidget.getHeight() + 'px'
 	    }
 	}
 }
