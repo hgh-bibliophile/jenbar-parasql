@@ -774,7 +774,7 @@ var utils = function() {
 	        this.$sel._control.onclick = e => {
 	            if (this.$sel.opts.disabled) return
 	            if (e.ctrlKey) {
-	                this.dataCache.nativeSearch()
+	                this.launchNativeSearch()
 	            } else {
 	                this.$sel._onControlClick(e)	
 	            }
