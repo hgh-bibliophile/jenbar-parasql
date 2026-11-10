@@ -695,11 +695,11 @@ var utils = function() {
 	    }
 	    query(id, runSilent=false) {
 	        if (this._inQueue(id)) {
-	            return Promise.resolve(this)
+	            return Promise.resolve(false)
 	        } else {
 	            return _utils.sql.exec(this._getIdSQL(id), runSilent).then(dt => {
 	                this._processData(dt, true)
-	                return this
+	                return true
 	            })
 	        }
 	    }
@@ -766,7 +766,7 @@ var utils = function() {
 	                this.$sel.options.push(missingValue)
 	                this.value = this.dv
 	            }
-	            this.dataCache.query(this.dv).then(() => this._triggerRedisplay())
+	            this.dataCache.query(this.dv).then((ranQry) => ranQry && this._triggerRedisplay())
 	        }
 	
 	        // Ctrl+click opens QuickSearch or native PickList panel
