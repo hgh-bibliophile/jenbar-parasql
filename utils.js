@@ -717,7 +717,9 @@ var utils = function() {
 	        return this._data
 	    }
 	    _inQueue(id) {
-	        return this._queue.includes(id) ||  this._queue.push(id) > 0
+			const inQueue = this._queue.includes(id)
+			if (!inQueue) this._queue.push(id)
+	        return inQueue
 	    }
 	    qs(widgetId) {
 	        return this._qs ? this._qs({[this.pk]: widgetId}) : null
