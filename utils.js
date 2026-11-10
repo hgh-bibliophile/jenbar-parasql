@@ -790,8 +790,8 @@ var utils = function() {
 	            else if (e.code.startsWith('Key') && !this.$sel.isOpen) this.$sel.open()
 	        }
 	    
-	        this.$sel.el.querySelector('.vsel-control').style.height = this.width
-	        this.$sel.el.querySelector('.vsel').style.width = this.height
+	        this.$sel.el.querySelector('.vsel-control').style.height = this.height
+	        this.$sel.el.querySelector('.vsel').style.width = this.width
 	        this.$sel.panel.style.width = this.width
 	
 	        return this
