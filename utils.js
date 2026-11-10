@@ -796,7 +796,7 @@ var utils = function() {
 	        if (qs) {
 	            let _apply = qs.apply
 	            qs.apply = () => {
-	                _apply()//.call(this)
+	                _apply.call(qs)
 	                this.value = this.dv
 	                if (afterApply) afterApply()
 	            }
