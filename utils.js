@@ -814,7 +814,7 @@ var utils = function() {
 	    }
 		// Widget DataValue
 	    get dv() {
-	        return this._idDataValue?.getNumber() || null
+	        return this._idDataValue?.getNumber() || ""
 	    }
 	    set dv(v) {
 	        if (v == null) this._idDataValue.setNull()
