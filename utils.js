@@ -746,10 +746,8 @@ var utils = function() {
 	    }
 	    _display() {
 	        // Keeps from throwing an error when a search on the underlying table refreshes the hidden modal panel
-	        if (!this._htmlWidget?.isVisible()) return
+	        if (!this._htmlWidget?.isVisible()) return // HTML widget not visible in the DOM
 			if (!this._idDataValue) return // no dataValue for the associated field
-
-			console.log('Rendering Select')
 			
 	        // Clear the placeholder html (for clarity in the editor view) & set up a container div tagged with the linked psql widget id
 	        this._htmlWidget.getContentDiv().innerHTML = `<div id="${this._selectId}"></div>`
@@ -766,14 +764,11 @@ var utils = function() {
 	
 	        // If the linked field's current value is not in the cached list, query for just that id
 	        if (!this.$sel.getValue() && this._idDataValue.isNotNull()) {
-				console.log('Val not in list')
 				let missingValue = this.dataCache.data.find(v => v.value == this.dv)
 	            if (missingValue) {
-					console.log('Filter list, pushing value')
 	                this.$sel.options.push(missingValue)
 	                this.value = this.dv
 	            }
-				console.log('Querying for:', this.dv)
 	            this.dataCache.query(this.dv).then((ranQry) => ranQry && this._triggerRedisplay())
 	        }
 	
@@ -819,7 +814,7 @@ var utils = function() {
 	    }
 		// Widget DataValue
 	    get dv() {
-	        return this._idDataValue?.getNumber() || ""
+	        return this._idDataValue?.getNumber() || null
 	    }
 	    set dv(v) {
 	        if (v == null) this._idDataValue.setNull()
