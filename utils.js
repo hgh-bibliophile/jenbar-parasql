@@ -746,11 +746,9 @@ var utils = function() {
 	    }
 	    _display() {
 	        // Keeps from throwing an error when a search on the underlying table refreshes the hidden modal panel
-	        if (!this._htmlWidget?.isVisible()) return
-
-			// #test
-			console.log(this._idWidget.input, this._idWidget.isVisible(), this._idDataValue)
-	    
+	        if (!this._htmlWidget?.isVisible()) return // HTML widget not visible in the DOM
+			if (!this._idDataValue) return // no dataValue for the associated field
+			
 	        // Clear the placeholder html (for clarity in the editor view) & set up a container div tagged with the linked psql widget id
 	        this._htmlWidget.getContentDiv().innerHTML = `<div id="${this._selectId}"></div>`
 	        
